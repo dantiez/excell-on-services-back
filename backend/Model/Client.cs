@@ -9,6 +9,8 @@
         public string email { get; set; }
 
         public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Employee> Employees { get; set; }
+        public ICollection<ServiceUsage> ServiceUsages { get; set; }
     }
 
 }

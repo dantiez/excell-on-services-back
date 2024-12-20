@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace backend.Model
+﻿namespace backend.Model
 {
     public class Employee
     {
@@ -10,11 +8,12 @@ namespace backend.Model
         public string phone_number { get; set; }
         public string position { get; set; }
         public decimal wage { get; set; }
-        public int id_department { get; set; }
 
+         public string name { get; set; }
 
+        public int id_client { get; set; }
+        public Client Client { get; set; }  
 
-        [JsonIgnore]
         public ICollection<ServiceUsage> ServiceUsages { get; set; }
     }
 }

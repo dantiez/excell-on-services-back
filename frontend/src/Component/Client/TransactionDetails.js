@@ -1,134 +1,174 @@
-import React, { useEffect, useState } from "react";
-import { Container, Table, Card, Row, Col, Button } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import ServiceUsageService from "../Service/serviceUsageService";
-const TransactionDetail = () => {
-  const { idClient } = useParams();
-  const navigate = useNavigate();
+import EmployeeService from "../Service/EmployeeService";
+import ServicesService from "../Service/ServicesService";
 
+const TransactionDetailPage = () => {
   const [serviceUsages, setServiceUsages] = useState([]);
-  const [clientInfo, setClientInfo] = useState({});
-  const [totalFee, setTotalFee] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [employees, setEmployees] = useState([]);
+  const [servicesDetails, setServicesDetails] = useState({});
+  const [expandedServices, setExpandedServices] = useState({});
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { clientId } = location.state;
 
   useEffect(() => {
-    // Fetch client and service usage data based on idClient
-    const fetchTransactionDetails = async () => {
+    const fetchServiceUsages = async () => {
       try {
-        const transactionDetails =
-          await ServiceUsageService.getTransactionDetails(idClient);
-        if (transactionDetails) {
-          setClientInfo(transactionDetails.clientInfo);
-          setServiceUsages(transactionDetails.serviceUsages);
-          calculateTotalFee(transactionDetails.serviceUsages);
-        }
+        const data =
+          await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
+            clientId,
+            "not yet paid",
+            null // No transaction date needed
+          );
+        setServiceUsages(data?.$values || []);
       } catch (error) {
-        console.error("Error fetching transaction details:", error);
+        console.error("Error fetching service usages:", error);
       }
     };
 
-    fetchTransactionDetails();
-  }, [idClient]);
+    const fetchEmployees = async () => {
+      try {
+        const data = await EmployeeService.getEmployeesByClientId(clientId);
+        setEmployees(data || []);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
 
-  const calculateTotalFee = (usages) => {
-    const total = usages.reduce((sum, usage) => sum + usage.total_fee, 0);
-    setTotalFee(total);
+    fetchServiceUsages();
+    fetchEmployees();
+  }, [clientId]);
+
+  const fetchServiceDetails = async (idService) => {
+    try {
+      if (!servicesDetails[idService]) {
+        const service = await ServicesService.getServiceById(idService);
+        setServicesDetails((prev) => ({
+          ...prev,
+          [idService]: service,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching service details:", error);
+    }
   };
 
-  const totalPages = Math.ceil(serviceUsages.length / itemsPerPage);
-  const currentItems = serviceUsages.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const groupServiceUsages = () => {
+    const grouped = {};
+    serviceUsages.forEach((usage) => {
+      const key = `${usage.idClient}-${usage.idService}`;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(usage);
+    });
+    return grouped;
   };
 
-  const handleBackClick = () => {
-    navigate("/Transaction");
+  const groupedServiceUsages = groupServiceUsages();
+
+  const toggleServiceDetails = (serviceId) => {
+    setExpandedServices((prev) => ({
+      ...prev,
+      [serviceId]: !prev[serviceId],
+    }));
+  };
+
+  const handleBack = () => navigate("/Transaction");
+
+  const getEmployeeDetails = (idEmployee) => {
+    return employees.find((employee) => employee.idEmployee === idEmployee);
   };
 
   return (
-    <Container className="my-5">
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header>
-              <Button variant="secondary" onClick={handleBackClick}>
-                &lt; Back to Transactions
-              </Button>
-              <h3 className="text-center">Transaction Details</h3>
-            </Card.Header>
-            <Card.Body>
-              <h4>Client Information</h4>
-              <Table striped bordered responsive>
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td>{clientInfo.name_Client}</td>
-                  </tr>
-                  <tr>
-                    <td>Phone Number</td>
-                    <td>{clientInfo.phone_number}</td>
-                  </tr>
-                  <tr>
-                    <td>Email</td>
-                    <td>{clientInfo.email}</td>
-                  </tr>
-                </tbody>
-              </Table>
+    <div className="container my-4">
+      <h3>Transaction Detail (Status: Not Yet Paid)</h3>
+      <p>
+        <strong>Client ID:</strong> {clientId}
+      </p>
+      <h4>Services and Employees</h4>
+      <table className="table table-striped table-bordered">
+        <thead className="table-dark">
+          <tr>
+            <th>Service</th>
+            <th>Total Amount</th> {/* Changed from "Price" to "Total Amount" */}
+            <th>Employee Count</th>
+            <th>Employees</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(groupedServiceUsages).length > 0 ? (
+            Object.entries(groupedServiceUsages).map(([key, usages]) => {
+              const serviceDetails = servicesDetails[usages[0].idService];
+              if (!serviceDetails) {
+                fetchServiceDetails(usages[0].idService);
+              }
 
-              <h4>Service Usage</h4>
-              <Table striped bordered responsive>
-                <thead>
+              const totalAmount = (serviceDetails?.price || 0) * usages.length; // Calculating total amount
+
+              return (
+                <React.Fragment key={key}>
                   <tr>
-                    <th>Service Name</th>
-                    <th>Total Fee</th>
-                    <th>Status</th>
-                    <th>Employee Name</th>
-                    <th>Usage Date</th>
+                    <td>{serviceDetails?.nameService || "N/A"}</td>
+                    <td>${totalAmount.toFixed(2) || "0.00"}</td>{" "}
+                    {/* Display total amount */}
+                    <td>{usages.length}</td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-secondary"
+                        onClick={() =>
+                          toggleServiceDetails(usages[0].idService)
+                        }
+                      >
+                        {expandedServices[usages[0].idService] ? "▼" : "▲"}
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((usage) => (
-                    <tr key={usage.id_service_usage}>
-                      <td>{usage.Service?.name_service || "N/A"}</td>
-                      <td>{usage.total_fee}</td>
-                      <td>{usage.status}</td>
-                      <td>{usage.employee_name}</td>
-                      <td>{usage.usage_date}</td>
+                  {expandedServices[usages[0].idService] && (
+                    <tr>
+                      <td colSpan="4">
+                        <strong>Service:</strong>{" "}
+                        {serviceDetails?.nameService || "N/A"} <br />
+                        <strong>Price:</strong> $
+                        {serviceDetails?.price?.toFixed(2) || "0.00"} <br />
+                        <strong>Employee Count:</strong> {usages.length} <br />
+                        {usages.map((usage) => {
+                          const employeeDetails = getEmployeeDetails(
+                            usage.idEmployee
+                          );
+                          return (
+                            <div key={usage.idEmployee}>
+                              <strong>Employee:</strong>{" "}
+                              {employeeDetails?.name || "N/A"} (
+                              {employeeDetails?.position || "N/A"}) <br />
+                              <strong>Usage Date:</strong>{" "}
+                              {new Date(usage.usageDate).toLocaleDateString()}{" "}
+                              <hr />
+                            </div>
+                          );
+                        })}
+                      </td>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-
-              <div className="d-flex justify-content-between">
-                <div>
-                  <h5>Total Fee: {totalFee}</h5>
-                </div>
-                <div>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <Button
-                      key={index}
-                      variant={
-                        currentPage === index + 1 ? "primary" : "secondary"
-                      }
-                      onClick={() => handlePageChange(index + 1)}
-                      className="mx-1"
-                    >
-                      {index + 1}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+                  )}
+                </React.Fragment>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="4" className="text-center">
+                No service usages available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      <button className="btn btn-primary" onClick={handleBack}>
+        Back to Transaction
+      </button>
+    </div>
   );
 };
 
-export default TransactionDetail;
+export default TransactionDetailPage;

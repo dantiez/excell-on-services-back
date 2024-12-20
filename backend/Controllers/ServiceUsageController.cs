@@ -1,11 +1,10 @@
-﻿using backend.Model;
+﻿using backend.DTO;
 using backend.Service;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace backend.Controllers
 {
-    [Route("api/serviceusage/")]
+    [Route("api/ServiceUsage")]
     [ApiController]
     public class ServiceUsageController : ControllerBase
     {
@@ -16,95 +15,71 @@ namespace backend.Controllers
             _serviceUsageService = serviceUsageService;
         }
 
+        // Get all ServiceUsages
         [HttpGet("all")]
-        public IActionResult GetAllServiceUsages()
+        public async Task<IActionResult> GetAllServiceUsages()
         {
-            try
-            {
-                var serviceUsages = _serviceUsageService.GetAllServiceUsages();
-                return Ok(serviceUsages);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            var result = await _serviceUsageService.GetAllServiceUsagesAsync();
+            return Ok(result);
         }
 
-        [HttpGet("status/{status}")]
-        public IActionResult GetServiceUsagesByStatus(string status)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(status))
-                {
-                    return BadRequest("Status parameter is required.");
-                }
-
-                var serviceUsages = _serviceUsageService.GetServiceUsagesByStatus(status);
-                return Ok(serviceUsages);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
+        // Get ServiceUsage by ID
         [HttpGet("{id}")]
-        public IActionResult GetServiceUsageById(int id)
+        public async Task<IActionResult> GetServiceUsageById(int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("Invalid ID.");
-                }
+            var result = await _serviceUsageService.GetServiceUsageByIdAsync(id);
+            if (result == null)
+                return NotFound($"ServiceUsage with ID {id} not found.");
 
-                var serviceUsage = _serviceUsageService.GetServiceUsageById(id);
-                if (serviceUsage == null)
-                {
-                    return NotFound("ServiceUsage not found.");
-                }
-
-                return Ok(serviceUsage);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-        [HttpPost("record-usage")]
-        public IActionResult RecordServiceUsage([FromQuery] int idEmployee, [FromQuery] int idService, [FromQuery] decimal servicePrice, [FromQuery] string status)
-        {
-            try
-            {
-                if (idEmployee <= 0 || idService <= 0 || servicePrice <= 0 || string.IsNullOrEmpty(status))
-                {
-                    return BadRequest("Invalid input parameters.");
-                }
-
-                _serviceUsageService.CreateServiceUsage(idEmployee, idService, servicePrice, status);
-                return Ok("Service usage recorded successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok(result);
         }
 
+        // Create ServiceUsage
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateServiceUsage([FromBody] ServiceUsageDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Invalid ServiceUsage data.");
 
+            var result = await _serviceUsageService.CreateServiceUsageAsync(dto);
+            return CreatedAtAction(nameof(GetServiceUsageById), new { id = result.IdServiceUsage }, result);
+        }
 
+        // Update ServiceUsage
         [HttpPut("update")]
-        public IActionResult UpdateServiceUsage([FromBody] ServiceUsage serviceUsage)
+        public async Task<IActionResult> UpdateServiceUsage([FromBody] ServiceUsageDTO dto)
+        {
+            var result = await _serviceUsageService.UpdateServiceUsageAsync(dto);
+            if (result == null)
+                return NotFound("ServiceUsage not found.");
+
+            return Ok(result);
+        }
+        [HttpGet("employee/{idEmployee}/hasPaidService")]
+        public async Task<IActionResult> CheckIfEmployeeHasPaidService(int idEmployee)
+        {
+            var result = await _serviceUsageService.CheckIfEmployeeHasPaidServiceAsync(idEmployee);
+            return Ok(result);
+        }
+
+        [HttpGet("client/{idClient}/status/{status}/transactionDate")]
+        public async Task<IActionResult> GetServiceUsagesByClientStatusAndDate(
+    int idClient, string status, DateTime? transactionDate)
+        {
+            var result = await _serviceUsageService.GetServiceUsagesByClientStatusAndDateAsync(idClient, status, transactionDate);
+            return Ok(result);
+        }
+
+        [HttpGet("employee/{idEmployee}/services")]
+        public async Task<IActionResult> GetServicesByEmployee(int idEmployee)
         {
             try
             {
-                if (serviceUsage == null || serviceUsage.id_service_usage <= 0)
-                {
-                    return BadRequest("Invalid ServiceUsage data.");
-                }
+                var result = await _serviceUsageService.GetServicesByEmployeeAsync(idEmployee);
+                if (result == null || !result.Any())
+                    return NotFound($"No services found for employee ID {idEmployee}");
 
-                _serviceUsageService.UpdateServiceUsage(serviceUsage);
-                return Ok("ServiceUsage updated successfully.");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -112,43 +87,39 @@ namespace backend.Controllers
             }
         }
 
-
-
-
-        // 1. Get ServiceUsage by id_client, status, and transaction_date
-        [HttpGet("by-client-status-date")]
-        public IActionResult GetServiceUsagesByClient(int idClient, string status, DateTime? transactionDate)
+        // Get service usages by status
+        [HttpGet("status/{status}")]
+        public async Task<IActionResult> GetServiceUsagesByStatus(string status)
         {
-            try
+            var result = await _serviceUsageService.GetServiceUsagesByStatusAsync(status);
+            if (result == null || !result.Any())
             {
-                var serviceUsages = _serviceUsageService.GetServiceUsagesByClient(idClient, status, transactionDate);
-                return Ok(serviceUsages);
+                return NotFound($"No service usages found with status {status}.");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok(result);
         }
+        // Update ServiceUsage - Change Service ID
+        [HttpPut("update-service/{idServiceUsage}")]
+        public async Task<IActionResult> UpdateService(int idServiceUsage, [FromBody] int newIdService)
+        {
+            var result = await _serviceUsageService.UpdateServiceAsync(idServiceUsage, newIdService);
+            if (result == null)
+                return NotFound("ServiceUsage not found.");
 
-
-
-        // 3. Update transaction_date
+            return Ok(result);
+        }
+        // Update ServiceUsage - Change Transaction Date
         [HttpPut("update-transaction-date/{idServiceUsage}")]
-        public IActionResult UpdateTransactionDate(int idServiceUsage, [FromBody] DateTime newTransactionDate)
+        public async Task<IActionResult> UpdateTransactionDate(int idServiceUsage, [FromBody] DateTime newTransactionDate)
         {
-            try
-            {
-                _serviceUsageService.UpdateTransactionDate(idServiceUsage, newTransactionDate);
-                return Ok("Transaction date updated successfully.");
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            var result = await _serviceUsageService.UpdateTransactionDateAsync(idServiceUsage, newTransactionDate);
+            if (result == null)
+                return NotFound("ServiceUsage not found.");
+
+            return Ok(result);
         }
+ 
+
     }
+
 }

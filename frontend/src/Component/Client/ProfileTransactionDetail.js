@@ -5,7 +5,7 @@ import ServiceUsageService from "../Service/serviceUsageService";
 import EmployeeService from "../Service/EmployeeService";
 import ServicesService from "../Service/ServicesService";
 
-const TransactionDetailPage = () => {
+const ProfileTransactionDetail = () => {
   const [transaction, setTransaction] = useState(null);
   const [serviceUsages, setServiceUsages] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -14,12 +14,18 @@ const TransactionDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { clientId, transactionDate, status, transactionId } = location.state;
+  const { clientId, transactionDate, status, idTransaction } = location.state;
 
   useEffect(() => {
+    console.log("Transaction ID:", idTransaction);
+    if (!idTransaction) {
+      console.error("Transaction ID is missing");
+      return;
+    }
+
     const fetchTransaction = async () => {
       try {
-        const data = await TransactionService.getTransactionById(transactionId);
+        const data = await TransactionService.getTransactionById(idTransaction);
         setTransaction(data || {});
         console.log("Transaction data:", data);
       } catch (error) {
@@ -55,7 +61,7 @@ const TransactionDetailPage = () => {
     fetchTransaction();
     fetchServiceUsages();
     fetchEmployees();
-  }, [clientId, transactionDate, status, transactionId]);
+  }, [clientId, transactionDate, status, idTransaction]);
 
   const fetchServiceDetails = async (idService) => {
     try {
@@ -214,4 +220,4 @@ const TransactionDetailPage = () => {
   );
 };
 
-export default TransactionDetailPage;
+export default ProfileTransactionDetail;
