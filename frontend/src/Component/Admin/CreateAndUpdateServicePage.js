@@ -4,8 +4,6 @@ import ServicesService from "../Service/ServicesService";
 import AlertMessage from "../AlertMessage";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// I just demo git
-
 const CreateAndUpdateServicePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();

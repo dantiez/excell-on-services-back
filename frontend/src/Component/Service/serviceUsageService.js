@@ -121,20 +121,6 @@ const ServiceUsageService = {
     }
   },
 
-  getServiceUsageByEmployeeId: async (idEmployee) => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/employee/${idEmployee}/hasPaidService`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error checking if employee has paid service:`, error);
-      throw new Error(
-        error.response?.data?.message || "Failed to check service payment."
-      );
-    }
-  },
-
   getServiceUsagesByClientStatusAndDate: async (
     idClient,
     status,
@@ -175,6 +161,23 @@ const ServiceUsageService = {
       throw new Error(
         error.response?.data?.message ||
           `Failed to fetch services for employee ID ${idEmployee}.`
+      );
+    }
+  },
+  getPaidServiceUsageByEmployeeAndClient: async (idEmployee, idClient) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/employee/${idEmployee}/client/${idClient}/hasPaidService`
+      );
+      return response.data; // Trả về dữ liệu nhận được từ API
+    } catch (error) {
+      console.error(
+        `Error fetching paid service usage for employee ${idEmployee} and client ${idClient}:`,
+        error
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          `Failed to fetch paid service usage for employee ${idEmployee} and client ${idClient}.`
       );
     }
   },

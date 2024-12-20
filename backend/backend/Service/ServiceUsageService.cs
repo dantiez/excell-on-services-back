@@ -125,23 +125,17 @@ namespace backend.Service
                 }).ToListAsync();
         }
 
-        public async Task<bool> CheckIfEmployeeHasPaidServiceAsync(int idEmployee)
+        public async Task<ServiceUsage> GetPaidServiceUsageAsync(int idEmployee, int idClient)
         {
-            try
-            {
-               
+
                 var paidService = await _context.ServiceUsages
-                    .Where(su => su.id_employee == idEmployee && su.status == "paid")
+                    .Where(su => su.id_employee == idEmployee && su.id_client == idClient )
                     .FirstOrDefaultAsync();
 
-                return paidService != null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error checking employee service payment:", ex);
-                return false;
-            }
+                return paidService; 
+
         }
+
 
         public async Task<List<ServiceUsageDTO>> GetServiceUsagesByClientStatusAndDateAsync(int idClient, string status, DateTime? transactionDate)
         {

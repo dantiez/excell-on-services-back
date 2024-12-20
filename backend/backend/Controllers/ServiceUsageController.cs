@@ -55,12 +55,20 @@ namespace backend.Controllers
 
             return Ok(result);
         }
-        [HttpGet("employee/{idEmployee}/hasPaidService")]
-        public async Task<IActionResult> CheckIfEmployeeHasPaidService(int idEmployee)
+
+        [HttpGet("employee/{idEmployee}/client/{idClient}/hasPaidService")]
+        public async Task<IActionResult> GetPaidServiceUsage(int idEmployee, int idClient)
         {
-            var result = await _serviceUsageService.CheckIfEmployeeHasPaidServiceAsync(idEmployee);
-            return Ok(result);
+            var serviceUsage = await _serviceUsageService.GetPaidServiceUsageAsync(idEmployee, idClient);
+
+            if (serviceUsage == null)
+            {
+                return NotFound(); 
+            }
+
+            return Ok(serviceUsage); 
         }
+
 
         [HttpGet("client/{idClient}/status/{status}/transactionDate")]
         public async Task<IActionResult> GetServiceUsagesByClientStatusAndDate(

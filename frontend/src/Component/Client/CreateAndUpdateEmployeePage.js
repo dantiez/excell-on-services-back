@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import EmployeeService from "../Service/EmployeeService";
 import ServiceUsageService from "../Service/serviceUsageService";
-import ServiceService from "../Service/ServicesService";
 import AlertMessage from "../AlertMessage";
+import ServicesService from "../Service/ServicesService";
 
 const CreateAndUpdateEmployeePage = () => {
   const { idClient, employeeId } = useParams();
@@ -21,69 +21,73 @@ const CreateAndUpdateEmployeePage = () => {
   });
 
   const [serviceUsage, setServiceUsage] = useState({
-    idService: location.state?.idService || "",
+    idService: "",
     status: "not yet paid",
     totalFee: "",
     usageDate: new Date().toISOString().slice(0, 19),
     transactionDate: null,
     idClient: idClient,
+    idServiceUsage: "", // Added to store service usage ID for updating
   });
 
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [services, setServices] = useState([]);
-  const [existingService, setExistingService] = useState(null);
+  const [existingServiceUsage, setExistingServiceUsage] = useState(null); // Track existing service usage
 
-  // Fetch available services
+  // Fetch services tied to the employee if editing
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await ServiceService.getAllServices();
-        const availableServices = response.$values || response || [];
-        setServices(availableServices);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-        setAlert({ message: "Error fetching services", type: "danger" });
-        setServices([]);
-      }
-    };
-    fetchServices();
-  }, []);
+        if (employeeId) {
+          // Fetch paid service usage related to the employee and client
+          const paidServiceUsage =
+            await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
+              employeeId,
+              idClient
+            );
 
-  // Fetch current service usage for employee if editing
-  useEffect(() => {
-    if (employeeId) {
-      const fetchServiceUsage = async () => {
-        try {
-          const usage = await ServiceUsageService.getServiceUsageByEmployeeId(
+          if (paidServiceUsage) {
+            // If there's a paid service usage, update serviceUsage state
+            setServiceUsage((prev) => ({
+              ...prev,
+              idService: paidServiceUsage.idService || "",
+              totalFee: paidServiceUsage.price || "",
+              status: "paid", // Mark status as 'paid' if there's a paid service
+              idServiceUsage: paidServiceUsage.idServiceUsage, // Store the existing service usage ID
+            }));
+            setExistingServiceUsage(paidServiceUsage); // Set the existing service usage
+          }
+
+          // Fetch services associated with the employee
+          const response = await ServiceUsageService.getServicesByEmployee(
             employeeId
           );
-          console.log("Fetched Service Usage for Employee ID:", usage);
-
-          if (usage && usage.$values && usage.$values.length > 0) {
-            const selectedService = usage.$values[0];
-            setExistingService(selectedService);
+          const employeeServices = response?.$values || [];
+          if (employeeServices.length > 0) {
+            const selectedService = employeeServices[0];
             setServiceUsage((prev) => ({
               ...prev,
               idService: selectedService.idService || "",
-              status: selectedService.status || "not yet paid",
               totalFee: selectedService.price || "",
             }));
-          } else {
-            console.warn("No service usage found for this employee.");
           }
-        } catch (error) {
-          console.error("Error fetching service usage:", error);
         }
-      };
-      fetchServiceUsage();
-    }
-  }, [employeeId]);
+
+        // Fetch all services for the dropdown
+        const allServicesResponse = await ServicesService.getAllServices();
+        setServices(allServicesResponse.$values || allServicesResponse || []);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+        setAlert({ message: "Error fetching services.", type: "danger" });
+      }
+    };
+    fetchServices();
+  }, [employeeId, idClient]); // Re-fetch when employeeId or idClient changes
 
   // Pre-fill employee data for editing
   useEffect(() => {
     if (employeeId && location.state?.employee) {
       setEmployee(location.state.employee);
-      console.log("Pre-filled Employee Data:", location.state?.employee);
     }
   }, [employeeId, location.state]);
 
@@ -98,13 +102,6 @@ const CreateAndUpdateEmployeePage = () => {
       const selectedService = services.find(
         (service) => service.idService.toString() === value
       );
-      console.log(
-        "Selected Service ID:",
-        value,
-        "Selected Service:",
-        selectedService
-      );
-
       setServiceUsage((prevServiceUsage) => ({
         ...prevServiceUsage,
         [name]: value,
@@ -141,27 +138,52 @@ const CreateAndUpdateEmployeePage = () => {
     if (!validateForm()) return;
 
     try {
-      console.log("Submitting form for Employee:", employee);
-      console.log("Service Usage to Submit:", serviceUsage);
-
       if (employeeId) {
+        // Check for duplicate service usage for this employee
+        if (
+          existingServiceUsage &&
+          existingServiceUsage.idService === serviceUsage.idService
+        ) {
+          setAlert({
+            message: "This service is already assigned to the employee.",
+            type: "danger",
+          });
+          return;
+        }
+
+        // Update employee data
         await EmployeeService.updateEmployee(employee);
-        await ServiceUsageService.updateServiceUsage({
-          ...serviceUsage,
-          idEmployee: employeeId,
-          idClient: idClient,
-        });
+
+        // If updating service usage, only update the service ID and ID
+        if (serviceUsage.idService) {
+          // Call the updateService method to update just the service ID
+          await ServiceUsageService.updateService(
+            serviceUsage.idServiceUsage,
+            serviceUsage.idService
+          );
+        }
+
         setAlert({
-          message: "Employee updated successfully!",
+          message: "Employee and service updated successfully!",
           type: "success",
         });
       } else {
+        // Create new employee
         const newEmployee = await EmployeeService.createEmployee(employee);
-        await ServiceUsageService.createServiceUsage({
+
+        // Create new service usage
+        const newServiceUsage = {
           ...serviceUsage,
           idEmployee: newEmployee.idEmployee,
           idClient: idClient,
-        });
+        };
+
+        // Handle transactionDate
+        if (!newServiceUsage.transactionDate) {
+          delete newServiceUsage.transactionDate; // Don't send transactionDate when creating new
+        }
+
+        await ServiceUsageService.createServiceUsage(newServiceUsage);
         setAlert({
           message: "Employee created successfully!",
           type: "success",
@@ -274,15 +296,11 @@ const CreateAndUpdateEmployeePage = () => {
             required
           >
             <option value="">Select a service</option>
-            {services.length > 0 ? (
-              services.map((service) => (
-                <option key={service.idService} value={service.idService}>
-                  {service.nameService}
-                </option>
-              ))
-            ) : (
-              <option value="">No services available</option>
-            )}
+            {services.map((service) => (
+              <option key={service.idService} value={service.idService}>
+                {service.nameService} - ${service.price}
+              </option>
+            ))}
           </select>
         </div>
 
