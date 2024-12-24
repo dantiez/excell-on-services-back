@@ -87,8 +87,7 @@ const ServiceUsageService = {
   updateService: async (idServiceUsage, newIdService) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/update-service/${idServiceUsage}`,
-        newIdService
+        `${API_BASE_URL}/update-service/${idServiceUsage}/${newIdService}`
       );
       return response.data;
     } catch (error) {
@@ -106,8 +105,7 @@ const ServiceUsageService = {
   updateTransactionDate: async (idServiceUsage, newTransactionDate) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/update-transaction-date/${idServiceUsage}`,
-        newTransactionDate
+        `${API_BASE_URL}/update-transaction-date/${idServiceUsage}/${newTransactionDate}`
       );
       return response.data;
     } catch (error) {
@@ -164,12 +162,13 @@ const ServiceUsageService = {
       );
     }
   },
+
   getPaidServiceUsageByEmployeeAndClient: async (idEmployee, idClient) => {
     try {
       const response = await axios.get(
         `${API_BASE_URL}/employee/${idEmployee}/client/${idClient}/hasPaidService`
       );
-      return response.data; // Trả về dữ liệu nhận được từ API
+      return response.data;
     } catch (error) {
       console.error(
         `Error fetching paid service usage for employee ${idEmployee} and client ${idClient}:`,
@@ -178,6 +177,67 @@ const ServiceUsageService = {
       throw new Error(
         error.response?.data?.message ||
           `Failed to fetch paid service usage for employee ${idEmployee} and client ${idClient}.`
+      );
+    }
+  },
+  deleteServiceUsageById: async (idServiceUsage) => {
+    try {
+      if (idServiceUsage <= 0) throw new Error("Invalid service usage ID.");
+      const response = await axios.delete(
+        `${API_BASE_URL}/delete/${idServiceUsage}`
+      );
+      // Return true if deletion succeeded, false otherwise
+      return response.data === true;
+    } catch (error) {
+      console.error(
+        `Error deleting service usage with ID ${idServiceUsage}:`,
+        error
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          `Failed to delete service usage with ID ${idServiceUsage}.`
+      );
+    }
+  },
+
+  checkServiceUsageExistsByServiceId: async (serviceId) => {
+    try {
+      if (serviceId <= 0) throw new Error("Invalid service ID.");
+      const response = await axios.get(
+        `${API_BASE_URL}/service/${serviceId}/exists`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error checking if service usage exists for service ${serviceId}:`,
+        error
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          `Failed to check if service usage exists for service ${serviceId}.`
+      );
+    }
+  },
+
+  updateStatus: async (idServiceUsage, newStatus) => {
+    try {
+      if (!newStatus || !idServiceUsage) {
+        throw new Error("ServiceUsage ID and status are required.");
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/update-status/${idServiceUsage}/${newStatus}`
+      );
+
+      return response.data; // Assuming the API returns updated service usage data
+    } catch (error) {
+      console.error(
+        `Error updating status for service usage ${idServiceUsage}:`,
+        error
+      );
+      throw new Error(
+        error.response?.data ||
+          `Failed to update status for service usage ${idServiceUsage}.`
       );
     }
   },

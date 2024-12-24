@@ -84,7 +84,7 @@ const TransactionDetailPage = () => {
 
   return (
     <div className="container my-4">
-      <h3>Transaction Detail (Status: Not Yet Paid)</h3>
+      <h3>Payment Detail (Status: Not Yet Paid)</h3>
       <p>
         <strong>Client ID:</strong> {clientId}
       </p>
@@ -165,7 +165,7 @@ const TransactionDetailPage = () => {
         </tbody>
       </table>
       <button className="btn btn-primary" onClick={handleBack}>
-        Back to Transaction
+        Back to Payment
       </button>
     </div>
   );

@@ -52,5 +52,23 @@ namespace backend.Controllers
                 return Ok(new { message = result });
             return BadRequest(new { message = result });
         }
+
+        [HttpGet("searchByName")]
+        public async Task<IActionResult> GetServicesByName([FromQuery] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest(new { message = "Service name cannot be empty." });
+            }
+
+            var result = await _servicesService.GetServicesByNameAsync(name);
+            if (result == null || !result.Any())
+            {
+                return NotFound(new { message = "No services found with the given name." });
+            }
+
+            return Ok(result);
+        }
+
     }
 }

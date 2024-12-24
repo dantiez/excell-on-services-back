@@ -7,14 +7,20 @@ const Home = () => {
   const [services, setServices] = useState([]);
   const navigate = useNavigate();
 
-  const serviceIds = [1, 2, 6]; // The IDs of the services to display
+  // Define service names to fetch dynamically
+  const validServiceNames = ["In-bound", "Out-bound", "Tele Marketing"];
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
+        // Fetch services by names
         const fetchedServices = await Promise.all(
-          serviceIds.map((id) => ServicesService.getServiceById(id))
+          validServiceNames.map(async (name) => {
+            const response = await ServicesService.getServicesByName(name);
+            return response.$values[0]; // Extract the first service object from the API response
+          })
         );
+
         setServices(fetchedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
@@ -24,13 +30,13 @@ const Home = () => {
     fetchServices();
   }, []);
 
-  const getServiceIcon = (idService) => {
-    switch (idService) {
-      case 1:
+  const getServiceIcon = (nameService) => {
+    switch (nameService) {
+      case "In-bound":
         return <FaHeadset size={40} color="#4CAF50" />;
-      case 2:
+      case "Out-bound":
         return <FaPhoneAlt size={40} color="#2196F3" />;
-      case 6:
+      case "Tele Marketing":
         return <FaBullhorn size={40} color="#FF5722" />;
       default:
         return null;
@@ -59,7 +65,7 @@ const Home = () => {
             }}
             onClick={() => handleCardClick(1, service.idService)} // Pass idClient and idService
           >
-            <div>{getServiceIcon(service.idService)}</div>
+            <div>{getServiceIcon(service.nameService)}</div>
             <h4 className="mt-3">{service.nameService}</h4>
             <p className="text-muted">${service.price.toFixed(2)}</p>
             <p>{service.content}</p>

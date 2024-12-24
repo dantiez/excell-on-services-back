@@ -116,12 +116,12 @@ const ProfileTransactionDetail = () => {
 
   return (
     <div className="container my-4">
-      <h3>Transaction Information</h3>
+      <h3>Payment Information</h3>
       <p>
         <strong>Client ID:</strong> {clientId}
       </p>
       <p>
-        <strong>Transaction Date:</strong>{" "}
+        <strong>Payment Date:</strong>{" "}
         {new Date(transaction?.transactionDate).toLocaleDateString() || "N/A"}
       </p>
       <p>
@@ -214,7 +214,7 @@ const ProfileTransactionDetail = () => {
       </table>
 
       <button className="btn btn-primary" onClick={handleBack}>
-        Back to Transactions
+        Back to Payment
       </button>
     </div>
   );

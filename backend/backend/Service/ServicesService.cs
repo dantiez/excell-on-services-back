@@ -113,5 +113,22 @@ namespace backend.Service
             await _context.SaveChangesAsync();
             return "Service deleted successfully.";
         }
+
+        // Read Service by Name
+        public async Task<List<ServiceDTO>> GetServicesByNameAsync(string name)
+        {
+            var services = await _context.Services
+                .Where(service => EF.Functions.Like(service.name_service, $"%{name}%"))
+                .ToListAsync();
+
+            return services.Select(service => new ServiceDTO
+            {
+                IdService = service.id_services,
+                NameService = service.name_service,
+                Content = service.content,
+                Price = service.price
+            }).ToList();
+        }
+
     }
 }

@@ -30,9 +30,20 @@ const EmployeePage = () => {
     const statuses = {};
     try {
       for (const emp of employees) {
-        const hasPaidService =
-          await ServiceUsageService.getServiceUsageByEmployeeId(emp.idEmployee);
-        statuses[emp.idEmployee] = hasPaidService;
+        // Fetch the service usage status for each employee
+        const serviceUsage =
+          await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
+            emp.idEmployee,
+            idClient
+          );
+        console.log("serviceUsage", serviceUsage); // In ra để kiểm tra dữ liệu trả về
+
+        // Check if the service usage status is 'paid' or not
+        if (serviceUsage && serviceUsage.status.trim() === "paid") {
+          statuses[emp.idEmployee] = "Paid";
+        } else {
+          statuses[emp.idEmployee] = "Not Yet Paid";
+        }
       }
       setEmployeeStatus(statuses);
     } catch (error) {
@@ -41,8 +52,7 @@ const EmployeePage = () => {
   };
 
   const handleDelete = async (id) => {
-    const hasPaidService = employeeStatus[id];
-    if (hasPaidService) {
+    if (employeeStatus[id] === "Paid") {
       setAlert({
         message: "Cannot delete employee with a paid service.",
         type: "danger",
@@ -56,9 +66,47 @@ const EmployeePage = () => {
     if (!confirmDelete) return;
 
     try {
+      // Step 1: Get the paid service usage for the employee and client
+      const serviceUsage =
+        await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
+          id,
+          idClient
+        );
+      console.log("Service Usage for Delete:", id);
+      console.log("Service Usage for Delete:", serviceUsage.id_service_usage);
+
+      // Step 2: If serviceUsage exists, attempt to delete the service usage
+      if (serviceUsage && serviceUsage.id_service_usage) {
+        console.log(
+          "Deleting service usage with id_service_usage:",
+          serviceUsage.id_service_usage
+        );
+
+        const isServiceUsageDeleted =
+          await ServiceUsageService.deleteServiceUsageById(
+            serviceUsage.id_service_usage
+          );
+
+        // Only proceed to delete the employee if service usage deletion returns true
+        if (!isServiceUsageDeleted) {
+          setAlert({
+            message: `Failed to delete service usage with ID: ${serviceUsage.id_service_usage}. Employee deletion aborted.`,
+            type: "danger",
+          });
+          return;
+        }
+      }
+
+      // Step 3: Delete the employee
       await EmployeeService.deleteEmployee(id);
-      setAlert({ message: "Employee deleted successfully!", type: "success" });
-      fetchEmployees();
+
+      setAlert({
+        message: "Employee and associated service usage deleted successfully!",
+        type: "success",
+      });
+
+      // Refresh the employee list after deletion
+      fetchEmployees(); // Fetch again to update the list and state after deletion
     } catch (error) {
       setAlert({
         message: `Failed to delete employee: ${error.message}`,
@@ -68,8 +116,7 @@ const EmployeePage = () => {
   };
 
   const handleUpdate = (employee) => {
-    const hasPaidService = employeeStatus[employee.idEmployee];
-    if (hasPaidService) {
+    if (employeeStatus[employee.idEmployee] === "Paid") {
       setAlert({
         message: "Cannot update employee with a paid service.",
         type: "danger",
@@ -81,8 +128,18 @@ const EmployeePage = () => {
     });
   };
 
-  const handleCreate = () => {
-    navigate(`/create-update-employee/${idClient}`);
+  const handleCreate = async () => {
+    try {
+      navigate(`/create-update-employee/${idClient}`);
+
+      // Refresh the employee list after creation
+      fetchEmployees(); // Fetch again to get the updated list of employees after creation
+    } catch (error) {
+      setAlert({
+        message: `Failed to create new employee: ${error.message}`,
+        type: "danger",
+      });
+    }
   };
 
   return (
@@ -102,6 +159,7 @@ const EmployeePage = () => {
             <th>Sex</th>
             <th>Position</th>
             <th>Wage</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -115,19 +173,20 @@ const EmployeePage = () => {
                 <td>{emp.phoneNumber}</td>
                 <td>{emp.sex}</td>
                 <td>{emp.position}</td>
-                <td>{emp.wage.toFixed(2)}</td>
+                <td>{emp.wage.toFixed(2)}$</td>
+                <td>{employeeStatus[emp.idEmployee]}</td>
                 <td>
                   <button
                     className="btn btn-warning btn-sm me-2"
                     onClick={() => handleUpdate(emp)}
-                    disabled={employeeStatus[emp.idEmployee]}
+                    disabled={employeeStatus[emp.idEmployee] === "Paid"} // Disable if service status is 'paid'
                   >
                     Update
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => handleDelete(emp.idEmployee)}
-                    disabled={employeeStatus[emp.idEmployee]}
+                    disabled={employeeStatus[emp.idEmployee] === "Paid"} // Disable if service status is 'paid'
                   >
                     Delete
                   </button>
@@ -136,7 +195,7 @@ const EmployeePage = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="8" className="text-center">
+              <td colSpan="9" className="text-center">
                 No employees found for this client.
               </td>
             </tr>

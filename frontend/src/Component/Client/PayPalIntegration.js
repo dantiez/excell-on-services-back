@@ -2,7 +2,7 @@ import React from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const PAYPAL_CLIENT_ID =
-  "AeWPLjpNjXl96mWA3YKaLk0KEfNEyMCmk2yg3kdtu_zQMvHzmdqmthY7J_r53tMyoqq0_IDVoOhd9gND";
+  "AcSOxI-Kb26NG1ieQgbbzPohvP7JCIuX23FWbK8uB3wtcH0uq02XJVh6w_c4mxA6dlPWUbTuDQwCeONi";
 
 const PayPalIntegration = ({ totalAmount, handlePaymentSuccess }) => {
   // Kiểm tra xem hàm handlePaymentSuccess có tồn tại không.

@@ -134,7 +134,7 @@ const TransactionPage = () => {
 
   return (
     <div className="container my-4">
-      <h1 className="text-center mb-4">Transactions</h1>
+      <h1 className="text-center mb-4">Payments</h1>
 
       <div className="d-flex justify-content-center mb-4">
         <button
@@ -167,7 +167,7 @@ const TransactionPage = () => {
             <tr>
               <th>Client</th>
               <th>Total Amount</th>
-              <th>Transaction Date</th>
+              <th>Payment Date</th>
               <th>Details</th>
             </tr>
           </thead>
@@ -197,7 +197,7 @@ const TransactionPage = () => {
             ) : (
               <tr>
                 <td colSpan="4" className="text-center">
-                  No transactions available
+                  No Payments available
                 </td>
               </tr>
             )}

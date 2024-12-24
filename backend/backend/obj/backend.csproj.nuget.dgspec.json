@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\project3\\backend\\backend\\backend.csproj": {}
+    "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj": {}
   },
   "projects": {
-    "D:\\project3\\backend\\backend\\backend.csproj": {
+    "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\project3\\backend\\backend\\backend.csproj",
+        "projectUniqueName": "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "D:\\project3\\backend\\backend\\backend.csproj",
+        "projectPath": "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj",
         "packagesPath": "C:\\Users\\tran thanh dat\\.nuget\\packages\\",
-        "outputPath": "D:\\project3\\backend\\backend\\obj\\",
+        "outputPath": "D:\\demo\\excell-on-services-back\\backend\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

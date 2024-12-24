@@ -224,33 +224,35 @@ namespace backend.Service
 
             return serviceUsages;
         }
-        public async Task<ServiceUsageDTO> UpdateServiceAsync(int idServiceUsage, int newIdService)
-        {
-            if (idServiceUsage <= 0 || newIdService <= 0)
-                throw new ArgumentException("Invalid parameters.");
+public async Task<ServiceUsageDTO> UpdateServiceAsync(int idServiceUsage, int newIdService)
+{
+    if (idServiceUsage <= 0 || newIdService <= 0)
+        throw new ArgumentException("Invalid parameters.");
 
-            var serviceUsage = await _context.ServiceUsages.FindAsync(idServiceUsage);
+    var serviceUsage = await _context.ServiceUsages.FindAsync(idServiceUsage);
 
-            if (serviceUsage == null)
-                return null;
+    if (serviceUsage == null)
+        return null;
 
-            serviceUsage.id_service = newIdService; // Update service ID
+    // Update the service ID
+    serviceUsage.id_service = newIdService;
 
-            _context.ServiceUsages.Update(serviceUsage);
-            await _context.SaveChangesAsync();
+    _context.ServiceUsages.Update(serviceUsage);
+    await _context.SaveChangesAsync();
 
-            return new ServiceUsageDTO
-            {
-                IdServiceUsage = serviceUsage.id_service_usage,
-                IdEmployee = serviceUsage.id_employee,
-                IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
-                Status = serviceUsage.status,
-                TotalFee = serviceUsage.total_fee,
-                UsageDate = serviceUsage.usage_date,
-                TransactionDate = serviceUsage.transaction_date
-            };
-        }
+    return new ServiceUsageDTO
+    {
+        IdServiceUsage = serviceUsage.id_service_usage,
+        IdEmployee = serviceUsage.id_employee,
+        IdService = serviceUsage.id_service,
+        IdClient = serviceUsage.id_client,
+        Status = serviceUsage.status,
+        TotalFee = serviceUsage.total_fee,
+        UsageDate = serviceUsage.usage_date,
+        TransactionDate = serviceUsage.transaction_date
+    };
+}
+
         public async Task<ServiceUsageDTO> UpdateTransactionDateAsync(int idServiceUsage, DateTime newTransactionDate)
         {
             if (idServiceUsage <= 0)
@@ -279,6 +281,62 @@ namespace backend.Service
             };
         }
 
+
+
+        // Update status of a ServiceUsage
+        public async Task<ServiceUsageDTO> UpdateStatusAsync(int idServiceUsage, string newStatus)
+        {
+            if (idServiceUsage <= 0 || string.IsNullOrEmpty(newStatus))
+                throw new ArgumentException("Invalid parameters.");
+
+            var serviceUsage = await _context.ServiceUsages.FindAsync(idServiceUsage);
+
+            if (serviceUsage == null)
+                return null;
+
+            // Update the status
+            serviceUsage.status = newStatus;
+
+            _context.ServiceUsages.Update(serviceUsage);
+            await _context.SaveChangesAsync();
+
+            return new ServiceUsageDTO
+            {
+                IdServiceUsage = serviceUsage.id_service_usage,
+                IdEmployee = serviceUsage.id_employee,
+                IdService = serviceUsage.id_service,
+                IdClient = serviceUsage.id_client,
+                Status = serviceUsage.status,
+                TotalFee = serviceUsage.total_fee,
+                UsageDate = serviceUsage.usage_date,
+                TransactionDate = serviceUsage.transaction_date
+            };
+        }
+
+
+        // Delete ServiceUsage by ID
+        public async Task<bool> DeleteServiceUsageByIdAsync(int idServiceUsage)
+        {
+            if (idServiceUsage <= 0)
+                throw new ArgumentException("Invalid ServiceUsage ID");
+
+            var serviceUsage = await _context.ServiceUsages.FindAsync(idServiceUsage);
+            if (serviceUsage == null)
+                return false; // Return false if ServiceUsage is not found
+
+            _context.ServiceUsages.Remove(serviceUsage);
+            await _context.SaveChangesAsync();
+
+            return true; // Return true if deletion was successful
+        }
+
+
+        public async Task<bool> CheckServiceUsageExistsByServiceIdAsync(int serviceId)
+        {
+            
+            return await _context.ServiceUsages
+                .AnyAsync(su => su.id_service == serviceId);
+        }
 
     }
 }

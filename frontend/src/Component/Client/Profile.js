@@ -175,7 +175,7 @@ const ProfilePage = () => {
             <tr>
               <th>Client</th>
               <th>Total Amount</th>
-              <th>Transaction Date</th>
+              <th>Payment Date</th>
               <th>Details</th>
             </tr>
           </thead>

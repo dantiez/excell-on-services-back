@@ -68,6 +68,20 @@ const ServicesService = {
       );
     }
   },
+
+  getServicesByName: async (name) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/searchByName`, {
+        params: { name }, // Pass the name as a query parameter
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error searching services by name:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to search services by name."
+      );
+    }
+  },
 };
 
 export default ServicesService;

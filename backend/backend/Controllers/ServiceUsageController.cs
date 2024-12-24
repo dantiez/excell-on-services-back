@@ -107,8 +107,8 @@ namespace backend.Controllers
             return Ok(result);
         }
         // Update ServiceUsage - Change Service ID
-        [HttpPut("update-service/{idServiceUsage}")]
-        public async Task<IActionResult> UpdateService(int idServiceUsage, [FromBody] int newIdService)
+        [HttpPut("update-service/{idServiceUsage}/{newIdService}")]
+        public async Task<IActionResult> UpdateService(int idServiceUsage, int newIdService)
         {
             var result = await _serviceUsageService.UpdateServiceAsync(idServiceUsage, newIdService);
             if (result == null)
@@ -116,9 +116,10 @@ namespace backend.Controllers
 
             return Ok(result);
         }
+
         // Update ServiceUsage - Change Transaction Date
-        [HttpPut("update-transaction-date/{idServiceUsage}")]
-        public async Task<IActionResult> UpdateTransactionDate(int idServiceUsage, [FromBody] DateTime newTransactionDate)
+        [HttpPut("update-transaction-date/{idServiceUsage}/{newTransactionDate}")]
+        public async Task<IActionResult> UpdateTransactionDate(int idServiceUsage, DateTime newTransactionDate)
         {
             var result = await _serviceUsageService.UpdateTransactionDateAsync(idServiceUsage, newTransactionDate);
             if (result == null)
@@ -126,8 +127,61 @@ namespace backend.Controllers
 
             return Ok(result);
         }
- 
+
+
+        [HttpDelete("delete/{idServiceUsage}")]
+        public async Task<IActionResult> DeleteServiceUsageById(int idServiceUsage)
+        {
+            try
+            {
+                var isDeleted = await _serviceUsageService.DeleteServiceUsageByIdAsync(idServiceUsage);
+                if (!isDeleted)
+                    return Ok(false); // Return false if not found or not deleted
+
+                return Ok(true); // Return true if deletion was successful
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}"); // Handle unexpected errors
+            }
+        }
+
+
+
+
+
+        [HttpGet("service/{serviceId}/exists")]
+        public async Task<IActionResult> CheckServiceUsageExistsByServiceId(int serviceId)
+        {
+            var exists = await _serviceUsageService.CheckServiceUsageExistsByServiceIdAsync(serviceId);
+
+            if (exists)
+            {
+                return Ok(true);  
+            }
+
+            return Ok(false);
+        }
+        // Update ServiceUsage - Change Status
+        [HttpPut("update-status/{idServiceUsage}/{newStatus}")]
+        public async Task<IActionResult> UpdateStatus(int idServiceUsage, string newStatus)
+        {
+            if (string.IsNullOrEmpty(newStatus))
+            {
+                return BadRequest("Status cannot be empty.");
+            }
+
+            var result = await _serviceUsageService.UpdateStatusAsync(idServiceUsage, newStatus);
+
+            if (result == null)
+                return NotFound("ServiceUsage not found.");
+
+            return Ok(result);
+        }
+
 
     }
+
+
 
 }

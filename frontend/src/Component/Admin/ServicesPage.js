@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ServicesService from "../Service/ServicesService";
+import ServiceUsageService from "../Service/serviceUsageService"; // Import ServiceUsageService here
 import AlertMessage from "../AlertMessage";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -16,27 +17,35 @@ const ServicesPage = () => {
   const fetchServices = async () => {
     try {
       const data = await ServicesService.getAllServices();
-      // Fetch usage status for each service
       const updatedServices = await Promise.all(
         data.map(async (service) => {
-          const isReferenced = await checkIfServiceIsUsed(service.idService);
+          const isReferenced = await checkServiceUsageExistsByServiceId(
+            service.idService
+          );
+          console.log(
+            `Service ID ${service.idService}: isReferenced = ${isReferenced}`
+          );
           return { ...service, isReferenced };
         })
       );
       setServices(updatedServices);
     } catch (error) {
-      setAlert({ message: error.message, type: "danger" });
+      setAlert({
+        message: error.message || "An error occurred while fetching services.",
+        type: "danger",
+      });
     }
   };
 
-  // Check if service is referenced
-  const checkIfServiceIsUsed = async (id) => {
+  // Check if service is being used (exists in service usages)
+  const checkServiceUsageExistsByServiceId = async (serviceId) => {
     try {
-      const service = await ServicesService.getServiceById(id);
-      return service.isReferenced || false; // Backend must return 'isReferenced'
+      const exists =
+        await ServiceUsageService.checkServiceUsageExistsByServiceId(serviceId);
+      return exists; // Returns true if the service is in use, false otherwise
     } catch (error) {
       console.error("Error checking service usage:", error);
-      return false; // Default to not being referenced
+      return false; // Default to not being in use
     }
   };
 
@@ -46,10 +55,20 @@ const ServicesPage = () => {
 
     try {
       const message = await ServicesService.deleteService(id);
-      setAlert({ message, type: "success" });
+      setAlert({
+        message:
+          typeof message === "string"
+            ? message
+            : "Service deleted successfully.",
+        type: "success",
+      });
       fetchServices();
     } catch (error) {
-      setAlert({ message: error.message, type: "danger" });
+      setAlert({
+        message:
+          error.message || "An error occurred while deleting the service.",
+        type: "danger",
+      });
     }
   };
 
@@ -81,6 +100,11 @@ const ServicesPage = () => {
                 <Link
                   to={`/services/update/${service.idService}`}
                   className="btn btn-warning btn-sm me-2"
+                  disabled={service.isReferenced} // Disable if service is in use
+                  style={{
+                    pointerEvents: service.isReferenced ? "none" : "auto", // Additional style to prevent clicks
+                    opacity: service.isReferenced ? 0.5 : 1, // Slightly fade the button when disabled
+                  }}
                 >
                   Update
                 </Link>
@@ -93,9 +117,6 @@ const ServicesPage = () => {
                 >
                   Delete
                 </button>
-                {service.isReferenced && (
-                  <span className="text-danger ms-2">In Use</span>
-                )}
               </td>
             </tr>
           ))}
