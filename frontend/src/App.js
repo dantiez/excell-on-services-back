@@ -17,16 +17,25 @@ import CreateAndUpdateServicePage from "./Component/Admin/CreateAndUpdateService
 import EmployeePage from "./Component/Client/EmployeePage";
 import CreateAndUpdateEmployeePage from "./Component/Client/CreateAndUpdateEmployeePage";
 import Home from "./Component/Client/Home";
+<<<<<<< HEAD
 import ProfilePage from "./Component/Client/Proflie";
 import Dashboard from "./Component/Admin/DashBoard";
+=======
+import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
+import { MantineProvider } from "@mantine/core";
+import DefaultLayout from "./Component/Layouts/DefaultLayout";
+>>>>>>> ada0244c4031243970e8ddb84edb63f1291a9692
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Default Route */}
-        <Route path="/" element={<Navigate to="/Home" replace />} />
+    <MantineProvider>
+      <Router>
+        <Routes>
+          {/* Default Route */}
+          <Route path="/" element={<Navigate to="/Home" replace />} />
 
+<<<<<<< HEAD
         {/* Client */}
         <Route path="/Home" element={<Home />} />
         <Route path="/Transaction/:Id" element={<Transaction />} />
@@ -61,6 +70,43 @@ function App() {
         <Route path="/Dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
+=======
+          {/* Client */}
+          <Route element={<DefaultLayout />}>
+            <Route path="/Home" element={<Home />} />
+            <Route path="/Transaction" element={<Transaction />} />
+            <Route path="/TransactionDetail" element={<TransactionDetails />} />
+            <Route path="/Profile/:idClient" element={<ProfilePage />} />
+            <Route
+              path="/Profile-Transaction-Detail"
+              element={<ProfileTransactionDetail />}
+            />
+            <Route path="/employees/:idClient" element={<EmployeePage />} />
+            <Route
+              path="/create-update-employee/:idClient/:employeeId?"
+              element={<CreateAndUpdateEmployeePage />}
+            />
+          </Route>
+
+          {/* Admin */}
+          <Route path="/Transaction-admin" element={<TransactionPage />} />
+          <Route
+            path="/Transaction-detail-admin"
+            element={<TransactionDetailPage />}
+          />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route
+            path="/services/create"
+            element={<CreateAndUpdateServicePage />}
+          />
+          <Route
+            path="/services/update/:id"
+            element={<CreateAndUpdateServicePage />}
+          />
+        </Routes>
+      </Router>
+    </MantineProvider>
+>>>>>>> ada0244c4031243970e8ddb84edb63f1291a9692
   );
 }
 

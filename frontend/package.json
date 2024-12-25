@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@kurkle/color": "^0.3.4",
+=======
+    "@mantine/carousel": "^7.15.2",
+    "@mantine/core": "^7.15.2",
+    "@mantine/hooks": "^7.15.2",
+>>>>>>> ada0244c4031243970e8ddb84edb63f1291a9692
     "@paypal/react-paypal-js": "^8.7.0",
+    "@tabler/icons-react": "^3.26.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -14,6 +21,7 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.6",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.2",
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.0.2",
     "react-scripts": "5.0.1",
@@ -44,6 +52,9 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1"
   }
 }
