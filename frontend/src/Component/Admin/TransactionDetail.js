@@ -88,7 +88,7 @@ const TransactionDetailPage = () => {
   const groupServiceUsages = () => {
     const grouped = {};
     serviceUsages.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }

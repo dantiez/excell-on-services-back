@@ -11,14 +11,14 @@ const TransactionDetailPage = () => {
   const [expandedServices, setExpandedServices] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
-  const { clientId } = location.state;
+  const { Id } = location.state;
 
   useEffect(() => {
     const fetchServiceUsages = async () => {
       try {
         const data =
           await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
-            clientId,
+            Id,
             "not yet paid",
             null // No transaction date needed
           );
@@ -30,7 +30,7 @@ const TransactionDetailPage = () => {
 
     const fetchEmployees = async () => {
       try {
-        const data = await EmployeeService.getEmployeesByClientId(clientId);
+        const data = await EmployeeService.getEmployeesByClientId(Id);
         setEmployees(data || []);
       } catch (error) {
         console.error("Error fetching employees:", error);
@@ -39,7 +39,7 @@ const TransactionDetailPage = () => {
 
     fetchServiceUsages();
     fetchEmployees();
-  }, [clientId]);
+  }, [Id]);
 
   const fetchServiceDetails = async (idService) => {
     try {
@@ -58,7 +58,7 @@ const TransactionDetailPage = () => {
   const groupServiceUsages = () => {
     const grouped = {};
     serviceUsages.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }
@@ -76,7 +76,7 @@ const TransactionDetailPage = () => {
     }));
   };
 
-  const handleBack = () => navigate("/Transaction");
+  const handleBack = () => navigate(`/Transaction/${Id}`);
 
   const getEmployeeDetails = (idEmployee) => {
     return employees.find((employee) => employee.idEmployee === idEmployee);
@@ -86,7 +86,7 @@ const TransactionDetailPage = () => {
     <div className="container my-4">
       <h3>Payment Detail (Status: Not Yet Paid)</h3>
       <p>
-        <strong>Client ID:</strong> {clientId}
+        <strong>Client ID:</strong> {Id}
       </p>
       <h4>Services and Employees</h4>
       <table className="table table-striped table-bordered">

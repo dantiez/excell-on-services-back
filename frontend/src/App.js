@@ -10,13 +10,15 @@ import Transaction from "./Component/Client/Transaction";
 import TransactionDetails from "./Component/Client/TransactionDetails";
 import TransactionPage from "./Component/Admin/Transaction";
 import TransactionDetailPage from "./Component/Admin/TransactionDetail";
-import ProfilePage from "./Component/Client/Profile";
+import ManegeTransaction from "./Component/Client/ManegeTransaction";
 import ProfileTransactionDetail from "./Component/Client/ProfileTransactionDetail";
 import ServicesPage from "./Component/Admin/ServicesPage";
 import CreateAndUpdateServicePage from "./Component/Admin/CreateAndUpdateServicePage";
 import EmployeePage from "./Component/Client/EmployeePage";
 import CreateAndUpdateEmployeePage from "./Component/Client/CreateAndUpdateEmployeePage";
 import Home from "./Component/Client/Home";
+import ProfilePage from "./Component/Client/Proflie";
+import Dashboard from "./Component/Admin/DashBoard";
 
 function App() {
   return (
@@ -27,18 +29,19 @@ function App() {
 
         {/* Client */}
         <Route path="/Home" element={<Home />} />
-        <Route path="/Transaction" element={<Transaction />} />
+        <Route path="/Transaction/:Id" element={<Transaction />} />
         <Route path="/TransactionDetail" element={<TransactionDetails />} />
-        <Route path="/Profile/:idClient" element={<ProfilePage />} />
+        <Route path="/ManegeTransaction/:Id" element={<ManegeTransaction />} />
         <Route
           path="/Profile-Transaction-Detail"
           element={<ProfileTransactionDetail />}
         />
-        <Route path="/employees/:idClient" element={<EmployeePage />} />
+        <Route path="/employees/:Id" element={<EmployeePage />} />
         <Route
-          path="/create-update-employee/:idClient/:employeeId?"
+          path="/create-update-employee/:Id/:employeeId?"
           element={<CreateAndUpdateEmployeePage />}
         />
+        <Route path="/Profile/:Id" element={<ProfilePage />} />
 
         {/* Admin */}
         <Route path="/Transaction-admin" element={<TransactionPage />} />
@@ -55,6 +58,7 @@ function App() {
           path="/services/update/:id"
           element={<CreateAndUpdateServicePage />}
         />
+        <Route path="/Dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );

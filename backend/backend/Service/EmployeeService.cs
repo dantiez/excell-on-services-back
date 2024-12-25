@@ -25,7 +25,7 @@ namespace backend.Service
                 sex = employeeDto.Sex,
                 phone_number = employeeDto.PhoneNumber,
                 wage = employeeDto.Wage,
-                id_client = employeeDto.IdClient
+                Id = employeeDto.Id
             };
 
             _context.Employees.Add(employee);
@@ -41,7 +41,7 @@ namespace backend.Service
                 Sex = employee.sex,
                 PhoneNumber = employee.phone_number,
                 Wage = employee.wage,
-                IdClient = employee.id_client
+                Id = employeeDto.Id
             };
         }
 
@@ -62,7 +62,7 @@ namespace backend.Service
                 Sex = employee.sex,
                 PhoneNumber = employee.phone_number,
                 Wage = employee.wage,
-                IdClient = employee.id_client
+                Id = employee.Id
             };
         }
 
@@ -79,7 +79,7 @@ namespace backend.Service
                     Sex = e.sex,
                     PhoneNumber = e.phone_number,
                     Wage = e.wage,
-                    IdClient = e.id_client
+                   Id = e.Id
                 }).ToListAsync();
         }
 
@@ -96,7 +96,7 @@ namespace backend.Service
             employee.sex = employeeDto.Sex;
             employee.phone_number = employeeDto.PhoneNumber;
             employee.wage = employeeDto.Wage;
-            employee.id_client = employeeDto.IdClient;
+            employee.Id = employeeDto.Id;
 
             _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
@@ -117,10 +117,10 @@ namespace backend.Service
         }
 
         // Get Employees by ClientId
-        public async Task<List<EmployeeDTO>> GetEmployeesByClientIdAsync(int clientId)
+        public async Task<List<EmployeeDTO>> GetEmployeesByClientIdAsync(int Id)
         {
             return await _context.Employees
-                .Where(e => e.id_client == clientId)
+                .Where(e => e.Id == Id)
                 .Select(e => new EmployeeDTO
                 {
                     IdEmployee = e.id_employee,
@@ -130,7 +130,7 @@ namespace backend.Service
                     Sex = e.sex,
                     PhoneNumber = e.phone_number,
                     Wage = e.wage,
-                    IdClient = e.id_client
+                    Id = e.Id
                 }).ToListAsync();
         }
     }

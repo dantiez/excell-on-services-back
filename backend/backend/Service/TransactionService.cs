@@ -2,88 +2,147 @@
 using backend.DTO;
 using backend.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace backend.Service
 {
     public class TransactionService
     {
         private readonly AppDbcontext _context;
+        private readonly ILogger<TransactionService> _logger;
 
-        public TransactionService(AppDbcontext context)
+        public TransactionService(AppDbcontext context, ILogger<TransactionService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // Create Transaction
         public async Task<TransactionDTO> CreateTransactionAsync(TransactionDTO dto)
         {
-            var transaction = new Transaction
+            try
             {
-                id_client = dto.IdClient,
-                transaction_date = dto.TransactionDate,
-                amount = dto.Amount,
-                payment_method = dto.PaymentMethod
-            };
+                var transaction = new Transaction
+                {
+                    Id = dto.Id,
+                    transaction_date = dto.TransactionDate,
+                    amount = dto.Amount,
+                    payment_method = dto.PaymentMethod
+                };
 
-            _context.Transaction.Add(transaction);
-            await _context.SaveChangesAsync();
+                _context.Transactions.Add(transaction);
+                await _context.SaveChangesAsync();
 
-            return new TransactionDTO
+                _logger.LogInformation("Transaction created successfully with ID: {TransactionId}", transaction.id_transaction);
+
+                return new TransactionDTO
+                {
+                    IdTransaction = transaction.id_transaction,
+                    Id = transaction.Id,
+                    TransactionDate = transaction.transaction_date,
+                    Amount = transaction.amount,
+                    PaymentMethod = transaction.payment_method
+                };
+            }
+            catch (Exception ex)
             {
-                IdTransaction = transaction.id_transaction,
-                IdClient = transaction.id_client,
-                TransactionDate = transaction.transaction_date,
-                Amount = transaction.amount,
-                PaymentMethod = transaction.payment_method
-            };
+                _logger.LogError(ex, "Error creating transaction.");
+                throw;
+            }
         }
 
         // Get Transactions by Client
-        public async Task<List<TransactionDTO>> GetTransactionsByClientIdAsync(int clientId)
+        public async Task<List<TransactionDTO>> GetTransactionsByClientIdAsync(int Id)
         {
-            return await _context.Transaction
-                .Where(t => t.id_client == clientId)
-                .Select(t => new TransactionDTO
-                {
-                    IdTransaction = t.id_transaction,
-                    IdClient = t.id_client,
-                    TransactionDate = t.transaction_date,
-                    Amount = t.amount,
-                    PaymentMethod = t.payment_method
-                }).ToListAsync();
+            try
+            {
+                return await _context.Transactions
+                    .Where(t => t.Id == Id)
+                    .Select(t => new TransactionDTO
+                    {
+                        IdTransaction = t.id_transaction,
+                        Id = t.Id,
+                        TransactionDate = t.transaction_date,
+                        Amount = t.amount,
+                        PaymentMethod = t.payment_method
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving transactions by client ID.");
+                throw;
+            }
         }
 
-        // Get All Transactions
         public async Task<List<TransactionDTO>> GetAllTransactionsAsync()
         {
-            return await _context.Transaction
-                .OrderByDescending(t => t.transaction_date)
-                .Select(t => new TransactionDTO
-                {
-                    IdTransaction = t.id_transaction,
-                    IdClient = t.id_client,
-                    TransactionDate = t.transaction_date,
-                    Amount = t.amount,
-                    PaymentMethod = t.payment_method
-                }).ToListAsync();
+            try
+            {
+                return await _context.Transactions
+                    .OrderByDescending(t => t.transaction_date)
+                    .Select(t => new TransactionDTO
+                    {
+                        IdTransaction = t.id_transaction,
+                        Id = t.Id,
+                        TransactionDate = t.transaction_date,
+                        Amount = t.amount,
+                        PaymentMethod = t.payment_method
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving all transactions.");
+                throw;
+            }
         }
 
         public async Task<TransactionDTO> GetTransactionByIdAsync(int transactionId)
         {
-            var transaction = await _context.Transaction
-                .Where(t => t.id_transaction == transactionId)
-                .Select(t => new TransactionDTO
-                {
-                    IdTransaction = t.id_transaction,
-                    IdClient = t.id_client,
-                    TransactionDate = t.transaction_date,
-                    Amount = t.amount,
-                    PaymentMethod = t.payment_method
-                })
-                .FirstOrDefaultAsync();
+            try
+            {
+                var transaction = await _context.Transactions
+                    .Where(t => t.id_transaction == transactionId)
+                    .Select(t => new TransactionDTO
+                    {
+                        IdTransaction = t.id_transaction,
+                        Id = t.Id,
+                        TransactionDate = t.transaction_date,
+                        Amount = t.amount,
+                        PaymentMethod = t.payment_method
+                    })
+                    .FirstOrDefaultAsync();
 
-            return transaction;
+                return transaction;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving transaction by ID.");
+                throw;
+            }
         }
 
+        public async Task<List<TransactionDTO>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return await _context.Transactions
+                    .Where(t => t.transaction_date >= startDate && t.transaction_date <= endDate)
+                    .OrderByDescending(t => t.transaction_date)
+                    .Select(t => new TransactionDTO
+                    {
+                        IdTransaction = t.id_transaction,
+                        Id = t.Id,
+                        TransactionDate = t.transaction_date,
+                        Amount = t.amount,
+                        PaymentMethod = t.payment_method
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving transactions by date range.");
+                throw;
+            }
+        }
     }
 }

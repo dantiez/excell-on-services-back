@@ -69,19 +69,16 @@ const EmployeeService = {
     }
   },
 
-  getEmployeesByClientId: async (clientId) => {
+  getEmployeesByClientId: async (Id) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/by-client/${clientId}`);
+      const response = await axios.get(`${API_BASE_URL}/by-User/${Id}`);
 
       return response.data.$values || [];
     } catch (error) {
-      console.error(
-        `Error fetching employees for client ID ${clientId}:`,
-        error
-      );
+      console.error(`Error fetching employees for client ID ${Id}:`, error);
       throw new Error(
         error.response?.data?.message ||
-          `Failed to fetch employees for client ID ${clientId}.`
+          `Failed to fetch employees for client ID ${Id}.`
       );
     }
   },

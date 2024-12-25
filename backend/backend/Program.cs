@@ -2,6 +2,7 @@ using backend.DbContext;
 using backend.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,13 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
+});
+
+// Register logging services (add Console and Debug log providers)
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();  // Logs to console
+    config.AddDebug();    // Logs to debug output
 });
 
 var app = builder.Build();

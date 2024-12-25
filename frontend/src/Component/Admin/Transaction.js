@@ -70,7 +70,7 @@ const TransactionPage = () => {
   const groupServiceUsages = () => {
     const grouped = {};
     filteredData.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }
@@ -124,7 +124,7 @@ const TransactionPage = () => {
   const handleTransactionDetails = (transaction) => {
     navigate("/Transaction-detail-admin", {
       state: {
-        clientId: transaction.idClient,
+        clientId: transaction.Id,
         transactionDate: transaction.transactionDate,
         status: "paid",
         transactionId: transaction.idTransaction, // Added transactionId here

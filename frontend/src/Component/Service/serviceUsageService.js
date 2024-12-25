@@ -120,12 +120,12 @@ const ServiceUsageService = {
   },
 
   getServiceUsagesByClientStatusAndDate: async (
-    idClient,
+    Id,
     status,
     transactionDate
   ) => {
     try {
-      let url = `${API_BASE_URL}/client/${idClient}/status/${status}/transactionDate`;
+      let url = `${API_BASE_URL}/User/${Id}/status/${status}/transactionDate`;
 
       if (transactionDate) {
         url += `?transactionDate=${transactionDate}`;
@@ -163,20 +163,20 @@ const ServiceUsageService = {
     }
   },
 
-  getPaidServiceUsageByEmployeeAndClient: async (idEmployee, idClient) => {
+  getPaidServiceUsageByEmployeeAndClient: async (idEmployee, Id) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/employee/${idEmployee}/client/${idClient}/hasPaidService`
+        `${API_BASE_URL}/employee/${idEmployee}/User/${Id}/hasPaidService`
       );
       return response.data;
     } catch (error) {
       console.error(
-        `Error fetching paid service usage for employee ${idEmployee} and client ${idClient}:`,
+        `Error fetching paid service usage for employee ${idEmployee} and client ${Id}:`,
         error
       );
       throw new Error(
         error.response?.data?.message ||
-          `Failed to fetch paid service usage for employee ${idEmployee} and client ${idClient}.`
+          `Failed to fetch paid service usage for employee ${idEmployee} and client ${Id}.`
       );
     }
   },

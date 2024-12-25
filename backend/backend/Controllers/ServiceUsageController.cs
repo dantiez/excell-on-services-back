@@ -56,10 +56,10 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("employee/{idEmployee}/client/{idClient}/hasPaidService")]
-        public async Task<IActionResult> GetPaidServiceUsage(int idEmployee, int idClient)
+        [HttpGet("employee/{idEmployee}/User/{Id}/hasPaidService")]
+        public async Task<IActionResult> GetPaidServiceUsage(int idEmployee, int Id)
         {
-            var serviceUsage = await _serviceUsageService.GetPaidServiceUsageAsync(idEmployee, idClient);
+            var serviceUsage = await _serviceUsageService.GetPaidServiceUsageAsync(idEmployee, Id);
 
             if (serviceUsage == null)
             {
@@ -70,11 +70,10 @@ namespace backend.Controllers
         }
 
 
-        [HttpGet("client/{idClient}/status/{status}/transactionDate")]
-        public async Task<IActionResult> GetServiceUsagesByClientStatusAndDate(
-    int idClient, string status, DateTime? transactionDate)
+        [HttpGet("User/{Id}/status/{status}/transactionDate")]
+        public async Task<IActionResult> GetServiceUsagesByClientStatusAndDate(int Id, string status, DateTime? transactionDate)
         {
-            var result = await _serviceUsageService.GetServiceUsagesByClientStatusAndDateAsync(idClient, status, transactionDate);
+            var result = await _serviceUsageService.GetServiceUsagesByClientStatusAndDateAsync(Id, status, transactionDate);
             return Ok(result);
         }
 

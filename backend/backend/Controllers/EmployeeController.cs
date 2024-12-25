@@ -52,10 +52,10 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("by-client/{clientId}")]
-        public async Task<IActionResult> GetEmployeesByClientId(int clientId)
+        [HttpGet("by-User/{Id}")]
+        public async Task<IActionResult> GetEmployeesByClientId(int Id)
         {
-            var result = await _employeeService.GetEmployeesByClientIdAsync(clientId);
+            var result = await _employeeService.GetEmployeesByClientIdAsync(Id);
             if (result == null || result.Count == 0) return NotFound("No employees found for the given client.");
             return Ok(result);
         }

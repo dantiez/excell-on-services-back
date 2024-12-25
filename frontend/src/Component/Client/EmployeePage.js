@@ -5,22 +5,25 @@ import ServiceUsageService from "../Service/serviceUsageService";
 import AlertMessage from "../AlertMessage";
 
 const EmployeePage = () => {
-  const { idClient } = useParams();
+  const { Id } = useParams();
   const navigate = useNavigate();
 
   const [employees, setEmployees] = useState([]);
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [employeeStatus, setEmployeeStatus] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchEmployees();
-  }, [idClient]);
+  }, [Id]);
 
   const fetchEmployees = async () => {
     try {
-      const data = await EmployeeService.getEmployeesByClientId(idClient);
-      setEmployees(data);
-      await checkEmployeeServices(data);
+      const data = await EmployeeService.getEmployeesByClientId(Id);
+      const sortedData = data.sort((a, b) => b.idEmployee - a.idEmployee);
+      setEmployees(sortedData);
+      await checkEmployeeServices(sortedData);
     } catch (error) {
       setAlert({ message: `Error: ${error.message}`, type: "danger" });
     }
@@ -30,15 +33,12 @@ const EmployeePage = () => {
     const statuses = {};
     try {
       for (const emp of employees) {
-        // Fetch the service usage status for each employee
         const serviceUsage =
           await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
             emp.idEmployee,
-            idClient
+            Id
           );
-        console.log("serviceUsage", serviceUsage); // In ra để kiểm tra dữ liệu trả về
 
-        // Check if the service usage status is 'paid' or not
         if (serviceUsage && serviceUsage.status.trim() === "paid") {
           statuses[emp.idEmployee] = "Paid";
         } else {
@@ -66,28 +66,18 @@ const EmployeePage = () => {
     if (!confirmDelete) return;
 
     try {
-      // Step 1: Get the paid service usage for the employee and client
       const serviceUsage =
         await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
           id,
-          idClient
+          Id
         );
-      console.log("Service Usage for Delete:", id);
-      console.log("Service Usage for Delete:", serviceUsage.id_service_usage);
 
-      // Step 2: If serviceUsage exists, attempt to delete the service usage
       if (serviceUsage && serviceUsage.id_service_usage) {
-        console.log(
-          "Deleting service usage with id_service_usage:",
-          serviceUsage.id_service_usage
-        );
-
         const isServiceUsageDeleted =
           await ServiceUsageService.deleteServiceUsageById(
             serviceUsage.id_service_usage
           );
 
-        // Only proceed to delete the employee if service usage deletion returns true
         if (!isServiceUsageDeleted) {
           setAlert({
             message: `Failed to delete service usage with ID: ${serviceUsage.id_service_usage}. Employee deletion aborted.`,
@@ -97,7 +87,6 @@ const EmployeePage = () => {
         }
       }
 
-      // Step 3: Delete the employee
       await EmployeeService.deleteEmployee(id);
 
       setAlert({
@@ -105,8 +94,7 @@ const EmployeePage = () => {
         type: "success",
       });
 
-      // Refresh the employee list after deletion
-      fetchEmployees(); // Fetch again to update the list and state after deletion
+      fetchEmployees();
     } catch (error) {
       setAlert({
         message: `Failed to delete employee: ${error.message}`,
@@ -123,17 +111,15 @@ const EmployeePage = () => {
       });
       return;
     }
-    navigate(`/create-update-employee/${idClient}/${employee.idEmployee}`, {
+    navigate(`/create-update-employee/${Id}/${employee.idEmployee}`, {
       state: { employee },
     });
   };
 
   const handleCreate = async () => {
     try {
-      navigate(`/create-update-employee/${idClient}`);
-
-      // Refresh the employee list after creation
-      fetchEmployees(); // Fetch again to get the updated list of employees after creation
+      navigate(`/create-update-employee/${Id}`);
+      fetchEmployees();
     } catch (error) {
       setAlert({
         message: `Failed to create new employee: ${error.message}`,
@@ -142,9 +128,20 @@ const EmployeePage = () => {
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const paginatedEmployees = employees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(employees.length / itemsPerPage);
+
   return (
     <div className="container mt-4">
-      <h2>Employees for Client ID: {idClient}</h2>
+      <h2 className="text-center mb-4">Employees Management Of {Id}</h2>
       <AlertMessage message={alert.message} type={alert.type} />
       <button className="btn btn-primary mb-3" onClick={handleCreate}>
         Create New Employee
@@ -164,8 +161,8 @@ const EmployeePage = () => {
           </tr>
         </thead>
         <tbody>
-          {employees.length > 0 ? (
-            employees.map((emp) => (
+          {paginatedEmployees.length > 0 ? (
+            paginatedEmployees.map((emp) => (
               <tr key={emp.idEmployee}>
                 <td>{emp.idEmployee}</td>
                 <td>{emp.name}</td>
@@ -179,14 +176,14 @@ const EmployeePage = () => {
                   <button
                     className="btn btn-warning btn-sm me-2"
                     onClick={() => handleUpdate(emp)}
-                    disabled={employeeStatus[emp.idEmployee] === "Paid"} // Disable if service status is 'paid'
+                    disabled={employeeStatus[emp.idEmployee] === "Paid"}
                   >
                     Update
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => handleDelete(emp.idEmployee)}
-                    disabled={employeeStatus[emp.idEmployee] === "Paid"} // Disable if service status is 'paid'
+                    disabled={employeeStatus[emp.idEmployee] === "Paid"}
                   >
                     Delete
                   </button>
@@ -202,6 +199,19 @@ const EmployeePage = () => {
           )}
         </tbody>
       </table>
+      <div className="pagination mt-3">
+        {[...Array(totalPages).keys()].map((page) => (
+          <button
+            key={page + 1}
+            className={`btn btn-sm ${
+              currentPage === page + 1 ? "btn-primary" : "btn-outline-primary"
+            } me-2`}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            {page + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

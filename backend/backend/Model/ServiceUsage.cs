@@ -7,7 +7,7 @@
         public int id_service_usage { get; set; }
         public int id_employee { get; set; }
         public int id_service { get; set; }
-        public int id_client { get; set; }
+        public int Id { get; set; }
         public string status { get; set; }
         public decimal total_fee { get; set; }
         public DateTime usage_date { get; set; }
@@ -17,7 +17,7 @@
         public Employee Employee { get; set; }
 
         [JsonIgnore]
-        public Client Client { get; set; }
+        public User User { get; set; }
 
         [JsonIgnore]
         public Services Service { get; set; }

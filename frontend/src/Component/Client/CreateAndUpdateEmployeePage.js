@@ -6,7 +6,7 @@ import AlertMessage from "../AlertMessage";
 import ServicesService from "../Service/ServicesService";
 
 const CreateAndUpdateEmployeePage = () => {
-  const { idClient, employeeId } = useParams();
+  const { Id, employeeId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const CreateAndUpdateEmployeePage = () => {
     phoneNumber: "",
     position: "",
     wage: "",
-    idClient: idClient,
+    Id: Id,
   });
 
   const [serviceUsage, setServiceUsage] = useState({
@@ -26,7 +26,7 @@ const CreateAndUpdateEmployeePage = () => {
     totalFee: "",
     usageDate: new Date().toISOString().slice(0, 19),
     transactionDate: null,
-    idClient: idClient,
+    Id: Id,
     idEmployee: "",
   });
 
@@ -48,7 +48,7 @@ const CreateAndUpdateEmployeePage = () => {
           const paidServiceUsage =
             await ServiceUsageService.getPaidServiceUsageByEmployeeAndClient(
               employeeId,
-              idClient
+              Id
             );
           if (paidServiceUsage) {
             setServiceUsage((prev) => ({
@@ -86,7 +86,7 @@ const CreateAndUpdateEmployeePage = () => {
     };
 
     fetchServices();
-  }, [employeeId, idClient]);
+  }, [employeeId, Id]);
 
   useEffect(() => {
     if (employeeId && location.state?.employee) {
@@ -142,10 +142,7 @@ const CreateAndUpdateEmployeePage = () => {
     // Phone number validation
     if (!employee.phoneNumber.trim())
       newErrors.phoneNumber = "Phone number is required.";
-    else if (employee.phoneNumber.length < 12)
-      newErrors.phoneNumber = "Phone number must be 12 digits.";
 
-    // Position validation
     if (!employee.position.trim()) newErrors.position = "Position is required.";
     else if (employee.position.length > 200)
       newErrors.position = "Position cannot exceed 200 characters.";
@@ -202,7 +199,7 @@ const CreateAndUpdateEmployeePage = () => {
         const newServiceUsage = {
           ...serviceUsage,
           idEmployee: newEmployee.idEmployee, // Set idEmployee from the created employee
-          idClient: idClient,
+          Id: Id,
         };
 
         console.log("New Service Usage Created: ", newServiceUsage); // Log when creating new service usage
@@ -222,7 +219,7 @@ const CreateAndUpdateEmployeePage = () => {
       }
 
       // Refresh employee list or update state after success
-      navigate(`/employees/${idClient}`);
+      navigate(`/Profile/${Id}`);
     } catch (error) {
       console.error("Error submitting form:", error);
       setAlert({ message: "Could not save employee.", type: "danger" });

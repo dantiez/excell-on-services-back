@@ -42,25 +42,16 @@ const TransactionService = {
     }
   },
 
-  /**
-   * Fetch transactions by client ID
-   * @param {number} idClient - The client ID
-   * @returns {Promise<Object[]>} A list of transactions for the specified client
-   * @throws {Error} If client ID is invalid or the request fails
-   */
-  getTransactionsByClientId: async (idClient) => {
+  getTransactionsByClientId: async (Id) => {
     try {
-      if (idClient <= 0) {
-        throw new Error("Invalid client ID.");
+      if (Id <= 0) {
+        throw new Error("Invalid User ID.");
       }
 
-      const response = await axios.get(`${API_BASE_URL}/by-client/${idClient}`);
+      const response = await axios.get(`${API_BASE_URL}/by-User/${Id}`);
       return response.data;
     } catch (error) {
-      console.error(
-        `Error fetching transactions by client ID ${idClient}:`,
-        error
-      );
+      console.error(`Error fetching transactions by User ID ${Id}:`, error);
       throw error;
     }
   },
@@ -88,6 +79,25 @@ const TransactionService = {
         error.response?.data?.message ||
           `Failed to fetch transaction with ID ${idTransaction}.`
       );
+    }
+  },
+
+  getTransactionsByDateRange: async (startDate, endDate) => {
+    try {
+      if (!startDate || !endDate) {
+        throw new Error("Both start and end dates are required.");
+      }
+
+      const formattedStartDate = new Date(startDate).toISOString();
+      const formattedEndDate = new Date(endDate).toISOString();
+
+      const response = await axios.get(
+        `${API_BASE_URL}/by-date-range?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching transactions by date range:", error);
+      throw error;
     }
   },
 };

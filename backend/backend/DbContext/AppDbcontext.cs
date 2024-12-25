@@ -7,35 +7,41 @@
     {
         public AppDbcontext(DbContextOptions<AppDbcontext> options) : base(options) { }
 
-        public DbSet<Client> Client { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.LogTo(Console.WriteLine); 
+        }
+
+        public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Services> Services { get; set; }
         public DbSet<ServiceUsage> ServiceUsages { get; set; }
-        public DbSet<Transaction> Transaction { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            
-            modelBuilder.Entity<Client>()
-                .HasKey(c => c.id_Client);
+            modelBuilder.Entity<User>()
+                .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Client>()
+            modelBuilder.Entity<User>()
                 .HasMany(c => c.Transactions)
-                .WithOne(t => t.Client)
-                .HasForeignKey(t => t.id_client);
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.Id);
 
-            modelBuilder.Entity<Client>()
+            modelBuilder.Entity<User>()
                 .HasMany(c => c.Employees)  
-                .WithOne(e => e.Client)
-                .HasForeignKey(e => e.id_client);
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.Id);
 
             modelBuilder.Entity<Employee>()
                 .HasKey(e => e.id_employee);
 
             modelBuilder.Entity<Employee>()
-                .HasOne(e => e.Client)
+                .HasOne(e => e.User)
                 .WithMany(c => c.Employees) 
-                .HasForeignKey(e => e.id_client);
+                .HasForeignKey(e => e.Id);
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.ServiceUsages)  
@@ -58,9 +64,9 @@
                 .HasKey(su => su.id_service_usage);
           
             modelBuilder.Entity<ServiceUsage>()
-    .HasOne(su => su.Client)
+    .HasOne(su => su.User)
     .WithMany(c => c.ServiceUsages) 
-    .HasForeignKey(su => su.id_client)
+    .HasForeignKey(su => su.Id)
     .OnDelete(DeleteBehavior.Restrict);
 
 
@@ -68,9 +74,9 @@
                 .HasKey(t => t.id_transaction);
 
             modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.Client)
+                .HasOne(t => t.User)
                 .WithMany(c => c.Transactions)
-                .HasForeignKey(t => t.id_client);
+                .HasForeignKey(t => t.Id);
 
             base.OnModelCreating(modelBuilder);
         }

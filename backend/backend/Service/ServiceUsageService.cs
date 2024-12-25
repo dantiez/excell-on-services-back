@@ -24,7 +24,7 @@ namespace backend.Service
             {
                 id_employee = dto.IdEmployee,
                 id_service = dto.IdService,
-                id_client = dto.IdClient,
+                Id = dto.Id,
                 status = dto.Status,
                 total_fee = dto.TotalFee,
                 usage_date = dto.UsageDate,
@@ -39,7 +39,7 @@ namespace backend.Service
                 IdServiceUsage = serviceUsage.id_service_usage,
                 IdEmployee = serviceUsage.id_employee,
                 IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
+                Id = serviceUsage.Id,
                 Status = serviceUsage.status,
                 TotalFee = serviceUsage.total_fee,
                 UsageDate = serviceUsage.usage_date,
@@ -55,7 +55,7 @@ namespace backend.Service
 
             var serviceUsage = await _context.ServiceUsages
                 .Include(su => su.Employee)
-                .Include(su => su.Client)
+                .Include(su => su.User)
                 .Include(su => su.Service)
                 .FirstOrDefaultAsync(su => su.id_service_usage == id);
 
@@ -67,7 +67,7 @@ namespace backend.Service
                 IdServiceUsage = serviceUsage.id_service_usage,
                 IdEmployee = serviceUsage.id_employee,
                 IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
+                Id = serviceUsage.Id,
                 Status = serviceUsage.status,
                 TotalFee = serviceUsage.total_fee,
                 UsageDate = serviceUsage.usage_date,
@@ -97,7 +97,7 @@ namespace backend.Service
                 IdServiceUsage = serviceUsage.id_service_usage,
                 IdEmployee = serviceUsage.id_employee,
                 IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
+                Id = serviceUsage.Id,
                 Status = serviceUsage.status,
                 TotalFee = serviceUsage.total_fee,
                 UsageDate = serviceUsage.usage_date,
@@ -110,14 +110,14 @@ namespace backend.Service
         {
             return await _context.ServiceUsages
                 .Include(su => su.Employee)
-                .Include(su => su.Client)
+                .Include(su => su.User)
                 .Include(su => su.Service)
                 .Select(su => new ServiceUsageDTO
                 {
                     IdServiceUsage = su.id_service_usage,
                     IdEmployee = su.id_employee,
                     IdService = su.id_service,
-                    IdClient = su.id_client,
+                    Id = su.Id,
                     Status = su.status,
                     TotalFee = su.total_fee,
                     UsageDate = su.usage_date,
@@ -125,11 +125,11 @@ namespace backend.Service
                 }).ToListAsync();
         }
 
-        public async Task<ServiceUsage> GetPaidServiceUsageAsync(int idEmployee, int idClient)
+        public async Task<ServiceUsage> GetPaidServiceUsageAsync(int idEmployee, int Id)
         {
 
                 var paidService = await _context.ServiceUsages
-                    .Where(su => su.id_employee == idEmployee && su.id_client == idClient )
+                    .Where(su => su.id_employee == idEmployee && su.Id == Id )
                     .FirstOrDefaultAsync();
 
                 return paidService; 
@@ -137,23 +137,20 @@ namespace backend.Service
         }
 
 
-        public async Task<List<ServiceUsageDTO>> GetServiceUsagesByClientStatusAndDateAsync(int idClient, string status, DateTime? transactionDate)
+        public async Task<List<ServiceUsageDTO>> GetServiceUsagesByClientStatusAndDateAsync(int Id, string status, DateTime? transactionDate)
         {
             var query = _context.ServiceUsages.AsQueryable();
 
-      
-            query = query.Where(su => su.id_client == idClient);
+            query = query.Where(su => su.Id == Id); 
 
-      
             if (!string.IsNullOrEmpty(status))
             {
                 query = query.Where(su => su.status == status);
             }
 
-      
             if (transactionDate.HasValue)
             {
-                query = query.Where(su => su.transaction_date == transactionDate);
+                query = query.Where(su => su.transaction_date.HasValue && su.transaction_date.Value == transactionDate.Value);
             }
             else
             {
@@ -162,14 +159,14 @@ namespace backend.Service
 
             return await query
                 .Include(su => su.Employee)
-                .Include(su => su.Client)
+                .Include(su => su.User)
                 .Include(su => su.Service)
                 .Select(su => new ServiceUsageDTO
                 {
                     IdServiceUsage = su.id_service_usage,
                     IdEmployee = su.id_employee,
                     IdService = su.id_service,
-                    IdClient = su.id_client,
+                    Id = su.Id, 
                     Status = su.status,
                     TotalFee = su.total_fee,
                     UsageDate = su.usage_date,
@@ -177,6 +174,7 @@ namespace backend.Service
                 })
                 .ToListAsync();
         }
+
         public async Task<List<ServiceDTO>> GetServicesByEmployeeAsync(int idEmployee)
         {
             if (idEmployee <= 0)
@@ -207,14 +205,14 @@ namespace backend.Service
 
             var serviceUsages = await query
                 .Include(su => su.Employee)
-                .Include(su => su.Client)
+                .Include(su => su.User)
                 .Include(su => su.Service)
                 .Select(su => new ServiceUsageDTO
                 {
                     IdServiceUsage = su.id_service_usage,
                     IdEmployee = su.id_employee,
                     IdService = su.id_service,
-                    IdClient = su.id_client,
+                    Id = su.Id,
                     Status = su.status,
                     TotalFee = su.total_fee,
                     UsageDate = su.usage_date,
@@ -245,7 +243,7 @@ public async Task<ServiceUsageDTO> UpdateServiceAsync(int idServiceUsage, int ne
         IdServiceUsage = serviceUsage.id_service_usage,
         IdEmployee = serviceUsage.id_employee,
         IdService = serviceUsage.id_service,
-        IdClient = serviceUsage.id_client,
+        Id = serviceUsage.Id,
         Status = serviceUsage.status,
         TotalFee = serviceUsage.total_fee,
         UsageDate = serviceUsage.usage_date,
@@ -273,7 +271,7 @@ public async Task<ServiceUsageDTO> UpdateServiceAsync(int idServiceUsage, int ne
                 IdServiceUsage = serviceUsage.id_service_usage,
                 IdEmployee = serviceUsage.id_employee,
                 IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
+                Id = serviceUsage.Id,
                 Status = serviceUsage.status,
                 TotalFee = serviceUsage.total_fee,
                 UsageDate = serviceUsage.usage_date,
@@ -305,7 +303,7 @@ public async Task<ServiceUsageDTO> UpdateServiceAsync(int idServiceUsage, int ne
                 IdServiceUsage = serviceUsage.id_service_usage,
                 IdEmployee = serviceUsage.id_employee,
                 IdService = serviceUsage.id_service,
-                IdClient = serviceUsage.id_client,
+                Id = serviceUsage.Id,
                 Status = serviceUsage.status,
                 TotalFee = serviceUsage.total_fee,
                 UsageDate = serviceUsage.usage_date,

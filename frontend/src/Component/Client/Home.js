@@ -44,8 +44,8 @@ const Home = () => {
   };
 
   // Handle card click to navigate with service ID
-  const handleCardClick = (idClient, idService) => {
-    navigate(`/create-update-employee/${idClient}`, { state: { idService } });
+  const handleCardClick = (Id, idService) => {
+    navigate(`/create-update-employee/${Id}`, { state: { idService } });
   };
 
   return (
@@ -63,7 +63,7 @@ const Home = () => {
               borderRadius: "10px",
               cursor: "pointer",
             }}
-            onClick={() => handleCardClick(1, service.idService)} // Pass idClient and idService
+            onClick={() => handleCardClick(1, service.idService)} // Pass Id and idService
           >
             <div>{getServiceIcon(service.nameService)}</div>
             <h4 className="mt-3">{service.nameService}</h4>

@@ -71,10 +71,10 @@ const CreateAndUpdateServicePage = () => {
       hasErrors = true;
     } else if (
       service.nameService.length < 3 ||
-      service.nameService.length > 200
+      service.nameService.length > 500
     ) {
       newErrors.nameService =
-        "Service name must be between 3 and 200 characters.";
+        "Service name must be between 3 and 500 characters.";
       hasErrors = true;
     } else if (!id) {
       const serviceNameExists = await checkIfServiceNameExists(
@@ -90,7 +90,7 @@ const CreateAndUpdateServicePage = () => {
     if (!service.content.trim()) {
       newErrors.content = "Service content is required.";
       hasErrors = true;
-    } else if (service.content.length < 3 || service.content.length > 200) {
+    } else if (service.content.length < 3 || service.content.length > 500) {
       newErrors.content =
         "Service content must be between 3 and 200 characters.";
       hasErrors = true;

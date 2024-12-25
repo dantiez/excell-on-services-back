@@ -10,7 +10,7 @@
         public string PhoneNumber { get; set; }
         public string Position { get; set; }
         public decimal Wage { get; set; }
-        public int IdClient { get; set; }
+        public int Id { get; set; }
     }
 }
     

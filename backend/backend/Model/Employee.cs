@@ -11,8 +11,8 @@
 
          public string name { get; set; }
 
-        public int id_client { get; set; }
-        public Client Client { get; set; }  
+        public int Id { get; set; }
+        public User User { get; set; }  
 
         public ICollection<ServiceUsage> ServiceUsages { get; set; }
     }

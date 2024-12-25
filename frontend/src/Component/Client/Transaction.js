@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PayPalIntegration from "./PayPalIntegration";
 import ServiceUsageService from "../Service/serviceUsageService";
 import ServicesService from "../Service/ServicesService";
@@ -8,6 +8,7 @@ import TransactionService from "../Service/transactionService";
 
 const Transaction = () => {
   const navigate = useNavigate();
+  const { Id } = useParams();
 
   const [serviceUsages, setServiceUsages] = useState([]);
   const [servicesDetails, setServicesDetails] = useState({});
@@ -22,7 +23,7 @@ const Transaction = () => {
       try {
         const usages =
           await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
-            1,
+            Id,
             "not yet paid",
             null
           );
@@ -49,7 +50,7 @@ const Transaction = () => {
           }, {});
           setServicesDetails(serviceDetailsMap);
 
-          const employeeData = await EmployeeService.getEmployeesByClientId(1);
+          const employeeData = await EmployeeService.getEmployeesByClientId(Id);
           setEmployees(employeeData || []);
 
           const amount = usages.$values.reduce(
@@ -69,7 +70,7 @@ const Transaction = () => {
     };
 
     fetchTransactionData();
-  }, []);
+  }, [Id]);
 
   const toggleServiceDetails = (serviceId) => {
     setExpandedServices((prev) => ({
@@ -80,6 +81,12 @@ const Transaction = () => {
 
   const handlePaymentSuccess = async () => {
     try {
+      // Check if the total amount is valid before proceeding with the payment
+      if (totalAmount <= 0) {
+        alert("Total amount is invalid. Please check the services.");
+        return;
+      }
+
       const newTotalAmount = serviceUsages.reduce(
         (sum, usage) => sum + (servicesDetails[usage.idService]?.price || 0),
         0
@@ -89,7 +96,7 @@ const Transaction = () => {
       setTotalAmount(finalAmount);
 
       const transactionDto = {
-        idClient: 1,
+        id: Id,
         amount: parseFloat(finalAmount.toFixed(2)),
         paymentMethod: "PayPal",
         transactionDate: new Date().toISOString(),
@@ -101,39 +108,41 @@ const Transaction = () => {
 
       const transactionDate = transactionResponse?.transactionDate;
 
+      // Update the status of services to "paid"
       for (const usage of serviceUsages) {
         try {
           await ServiceUsageService.updateStatus(usage.idServiceUsage, "paid");
 
           await ServiceUsageService.updateTransactionDate(
             usage.idServiceUsage,
-            transactionDate || new Date().toISOString()
+            transactionResponse.transactionDate
           );
         } catch (error) {
           console.error(
-            `Error updating status or transaction date for service usage ${usage.idServiceUsage}:`,
+            `Error updating status or transaction date for service ${usage.idServiceUsage}:`,
             error
           );
         }
       }
 
-      alert("Payment processed and transaction created successfully!");
+      alert("Payment successful, and transaction has been created!");
+      navigate(`/Profile/${Id}`);
     } catch (error) {
-      console.error("Error during payment success handling:", error);
-      alert("Error processing payment.");
+      console.error("Error processing payment:", error);
+      alert("There was an error processing the payment.");
     }
   };
 
   const navigateToDetails = () => {
     navigate("/TransactionDetail", {
-      state: { clientId: 1 },
+      state: { Id: Id },
     });
   };
 
   const groupServiceUsages = () => {
     const grouped = {};
     serviceUsages.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }

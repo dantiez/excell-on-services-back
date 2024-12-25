@@ -14,8 +14,7 @@ const ProfileTransactionDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { clientId, transactionDate, status, idTransaction } = location.state;
-
+  const { Id, transactionDate, status, idTransaction } = location.state;
   useEffect(() => {
     console.log("Transaction ID:", idTransaction);
     if (!idTransaction) {
@@ -37,7 +36,7 @@ const ProfileTransactionDetail = () => {
       try {
         const data =
           await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
-            clientId,
+            Id,
             status,
             transactionDate
           );
@@ -50,7 +49,7 @@ const ProfileTransactionDetail = () => {
 
     const fetchEmployees = async () => {
       try {
-        const data = await EmployeeService.getEmployeesByClientId(clientId);
+        const data = await EmployeeService.getEmployeesByClientId(Id);
         console.log("Fetched employees:", data);
         setEmployees(data || []);
       } catch (error) {
@@ -61,7 +60,7 @@ const ProfileTransactionDetail = () => {
     fetchTransaction();
     fetchServiceUsages();
     fetchEmployees();
-  }, [clientId, transactionDate, status, idTransaction]);
+  }, [Id, transactionDate, status, idTransaction]);
 
   const fetchServiceDetails = async (idService) => {
     try {
@@ -94,7 +93,7 @@ const ProfileTransactionDetail = () => {
   const groupServiceUsages = () => {
     const grouped = {};
     serviceUsages.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }
@@ -118,7 +117,7 @@ const ProfileTransactionDetail = () => {
     <div className="container my-4">
       <h3>Payment Information</h3>
       <p>
-        <strong>Client ID:</strong> {clientId}
+        <strong>User ID:</strong> {Id}
       </p>
       <p>
         <strong>Payment Date:</strong>{" "}

@@ -5,13 +5,12 @@ import ServiceUsageService from "../Service/serviceUsageService";
 import EmployeeService from "../Service/EmployeeService";
 import ServicesService from "../Service/ServicesService";
 
-const ProfilePage = () => {
+const ManegeTransaction = ({ Id }) => {
   const [transactions, setTransactions] = useState([]);
   const [serviceUsages, setServiceUsages] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [servicesDetails, setServicesDetails] = useState({});
-  const [filter, setFilter] = useState("not_yet_paid");
-  const [idClient, setIdClient] = useState(1); // Fixed client ID
+  const [filter, setFilter] = useState("paid");
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState({});
   const navigate = useNavigate();
@@ -19,8 +18,11 @@ const ProfilePage = () => {
   // Fetch transactions for the given client ID
   const fetchTransactionsByClient = async () => {
     try {
-      const data = await TransactionService.getTransactionsByClientId(idClient);
-      setTransactions(data?.$values || []);
+      const data = await TransactionService.getTransactionsByClientId(Id);
+      const sortedTransactions = data?.$values?.sort(
+        (a, b) => b.idTransaction - a.idTransaction // Sort by transaction ID descending
+      );
+      setTransactions(sortedTransactions || []);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -31,11 +33,16 @@ const ProfilePage = () => {
     try {
       const data =
         await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
-          idClient,
+          Id,
           "not yet paid",
           null
         );
-      setServiceUsages(data?.$values || []);
+
+      const filteredServiceUsages = data?.$values
+        ?.filter((usage) => usage.status.trim() === "not yet paid")
+        .sort((a, b) => b.idService - a.idService);
+
+      setServiceUsages(filteredServiceUsages || []);
     } catch (error) {
       console.error("Error fetching service usages:", error);
     }
@@ -73,14 +80,14 @@ const ProfilePage = () => {
 
   // Trigger data fetching based on filter
   useEffect(() => {
-    if (idClient) {
+    if (Id) {
       if (filter === "paid") {
         fetchTransactionsByClient();
       } else {
         fetchServiceUsagesByClientAndStatus();
       }
     }
-  }, [idClient, filter]);
+  }, [Id, filter]);
 
   // Fetch service details when service usages are loaded
   useEffect(() => {
@@ -113,35 +120,35 @@ const ProfilePage = () => {
   const groupServiceUsages = () => {
     const grouped = {};
     serviceUsages.forEach((usage) => {
-      const key = `${usage.idClient}-${usage.idService}`;
+      const key = `${usage.Id}-${usage.idService}`;
       if (!grouped[key]) {
         grouped[key] = [];
       }
       grouped[key].push(usage);
     });
-    return grouped;
+
+    const sortedGroups = Object.entries(grouped).sort(([keyA], [keyB]) => {
+      const [IdA, serviceA] = keyA.split("-");
+      const [IdB, serviceB] = keyB.split("-");
+      return serviceB - serviceA; // Sort by service ID descending
+    });
+
+    return sortedGroups.map(([key, group]) => ({
+      key,
+      group,
+    }));
   };
 
   const groupedData = groupServiceUsages();
-  const serviceUsagesGroups = Object.entries(groupedData).map(
-    ([key, group]) => ({
-      key,
-      group,
-    })
-  );
-
   const itemsPerPage = 5;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = serviceUsagesGroups.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(serviceUsagesGroups.length / itemsPerPage);
-
+  const currentItems = groupedData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(groupedData.length / itemsPerPage);
+  console.log("id", Id);
   return (
     <div className="container my-4">
-      <h1 className="text-center mb-4">Profile</h1>
+      <h1 className="text-center mb-4">Manege Transaction</h1>
       {/* Filter Buttons */}
       <div className="d-flex justify-content-center mb-4">
         <button
@@ -168,12 +175,11 @@ const ProfilePage = () => {
         </button>
       </div>
 
-      {/* Display service usages or transactions */}
       {filter === "paid" ? (
         <table className="table table-striped table-bordered">
           <thead className="table-dark">
             <tr>
-              <th>Client</th>
+              <th>User</th>
               <th>Total Amount</th>
               <th>Payment Date</th>
               <th>Details</th>
@@ -182,7 +188,7 @@ const ProfilePage = () => {
           <tbody>
             {transactions.map((transaction) => (
               <tr key={transaction.idTransaction}>
-                <td>{transaction.client?.name || "N/A"}</td>
+                <td>{transaction.id?.name || "N/A"}</td>
                 <td>${transaction.amount?.toFixed(2) || "0.00"}</td>
                 <td>
                   {new Date(transaction.transactionDate).toLocaleDateString() ||
@@ -194,7 +200,7 @@ const ProfilePage = () => {
                     onClick={() =>
                       navigate("/Profile-Transaction-Detail", {
                         state: {
-                          clientId: transaction.idClient,
+                          Id: transaction.id,
                           transactionDate: transaction.transactionDate,
                           status: "paid",
                           idTransaction: transaction.idTransaction,
@@ -213,7 +219,7 @@ const ProfilePage = () => {
         <table className="table table-striped table-bordered">
           <thead className="table-dark">
             <tr>
-              <th>Client</th>
+              <th>User</th>
               <th>Total Amount</th>
               <th>Details</th>
             </tr>
@@ -231,7 +237,7 @@ const ProfilePage = () => {
               return (
                 <React.Fragment key={key}>
                   <tr>
-                    <td>{group[0]?.client?.name || "N/A"}</td>
+                    <td>{group[0].Id || "N/A"}</td>
                     <td>${totalAmount?.toFixed(2) || "0.00"}</td>
                     <td>
                       <button
@@ -248,8 +254,8 @@ const ProfilePage = () => {
                         <strong>Service:</strong>{" "}
                         {serviceDetails?.nameService || "N/A"}
                         <br />
-                        <strong>Price:</strong> $
-                        {serviceDetails?.price?.toFixed(2) || "0.00"}
+                        <strong>Price:</strong> ${" "}
+                        {serviceDetails?.price.toFixed(2) || "0"}
                         <br />
                         <strong>Employees:</strong>
                         <ul>
@@ -258,13 +264,12 @@ const ProfilePage = () => {
                               service.idEmployee
                             );
                             return (
-                              <li key={service.idEmployee}>
+                              <li key={service.idServiceUsage}>
                                 {employeeDetails?.name || "N/A"} -{" "}
-                                {employeeDetails?.position || "N/A"}
-                                {" - "}
+                                {employeeDetails?.position || "N/A"} on{" "}
                                 {new Date(
                                   service.usageDate
-                                ).toLocaleDateString() || "N/A"}
+                                ).toLocaleDateString()}
                               </li>
                             );
                           })}
@@ -280,28 +285,29 @@ const ProfilePage = () => {
       )}
 
       {/* Pagination */}
-      <nav>
-        <ul className="pagination justify-content-center">
-          <li
-            className="page-item"
-            onClick={() => handlePageChange(currentPage - 1)}
-          >
-            <a className="page-link" href="#">
-              Previous
-            </a>
-          </li>
-          <li
-            className="page-item"
-            onClick={() => handlePageChange(currentPage + 1)}
-          >
-            <a className="page-link" href="#">
-              Next
-            </a>
-          </li>
-        </ul>
-      </nav>
+      {groupedData.length > itemsPerPage && (
+        <nav className="d-flex justify-content-center">
+          <ul className="pagination">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <li
+                key={index}
+                className={`page-item ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };
 
-export default ProfilePage;
+export default ManegeTransaction;
