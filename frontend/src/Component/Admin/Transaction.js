@@ -124,10 +124,10 @@ const TransactionPage = () => {
   const handleTransactionDetails = (transaction) => {
     navigate("/Transaction-detail-admin", {
       state: {
-        clientId: transaction.Id,
+        Id: transaction.id,
         transactionDate: transaction.transactionDate,
         status: "paid",
-        transactionId: transaction.idTransaction, // Added transactionId here
+        transactionId: transaction.idTransaction,
       },
     });
   };

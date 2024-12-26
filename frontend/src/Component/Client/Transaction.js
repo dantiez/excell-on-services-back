@@ -273,6 +273,7 @@ const Transaction = () => {
                       handlePaymentSuccess={handlePaymentSuccess}
                     />
                   </div>
+                  {console.log(totalAmount, "totalAmount")}
                 </>
               )}
             </div>

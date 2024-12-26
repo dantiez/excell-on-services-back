@@ -14,8 +14,8 @@ const TransactionDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { clientId, transactionDate, status, transactionId } = location.state;
-
+  const { Id, transactionDate, status, transactionId } = location.state;
+  console.log(Id, "id");
   useEffect(() => {
     const fetchTransaction = async () => {
       try {
@@ -31,7 +31,7 @@ const TransactionDetailPage = () => {
       try {
         const data =
           await ServiceUsageService.getServiceUsagesByClientStatusAndDate(
-            clientId,
+            Id,
             status,
             transactionDate
           );
@@ -44,7 +44,7 @@ const TransactionDetailPage = () => {
 
     const fetchEmployees = async () => {
       try {
-        const data = await EmployeeService.getEmployeesByClientId(clientId);
+        const data = await EmployeeService.getEmployeesByClientId(Id);
         console.log("Fetched employees:", data);
         setEmployees(data || []);
       } catch (error) {
@@ -55,7 +55,7 @@ const TransactionDetailPage = () => {
     fetchTransaction();
     fetchServiceUsages();
     fetchEmployees();
-  }, [clientId, transactionDate, status, transactionId]);
+  }, [Id, transactionDate, status, transactionId]);
 
   const fetchServiceDetails = async (idService) => {
     try {
@@ -112,7 +112,7 @@ const TransactionDetailPage = () => {
     <div className="container my-4">
       <h3>Transaction Information</h3>
       <p>
-        <strong>Client ID:</strong> {clientId}
+        <strong>Client ID:</strong> {Id}
       </p>
       <p>
         <strong>Transaction Date:</strong>{" "}

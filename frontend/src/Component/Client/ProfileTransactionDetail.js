@@ -111,7 +111,7 @@ const ProfileTransactionDetail = () => {
     }));
   };
 
-  const handleBack = () => navigate("/Transaction-admin");
+  const handleBack = () => navigate(`/Profile/${Id}`);
 
   return (
     <div className="container my-4">

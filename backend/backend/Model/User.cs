@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System.Collections.Generic;
 using System;
 namespace backend.Model
@@ -49,9 +49,4 @@ namespace backend.Model
         public ICollection<ServiceUsage> ServiceUsages { get; set; }
     }
 }
-=======
-namespace backend.Model {
-    public class User { 
-    }
-}
->>>>>>> ada0244c4031243970e8ddb84edb63f1291a9692
+

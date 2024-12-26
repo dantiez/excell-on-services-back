@@ -129,3 +129,4 @@ D:\demo\excell-on-services-back\backend\backend\bin\Debug\net6.0\backend.dll
 D:\demo\excell-on-services-back\backend\backend\bin\Debug\net6.0\backend.pdb
 D:\demo\excell-on-services-back\backend\backend\obj\Debug\net6.0\backend.genruntimeconfig.cache
 D:\demo\excell-on-services-back\backend\backend\obj\Debug\net6.0\ref\backend.dll
+D:\demo\excell-on-services-back\backend\backend\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

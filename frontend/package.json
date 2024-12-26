@@ -3,13 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-<<<<<<< HEAD
     "@kurkle/color": "^0.3.4",
-=======
     "@mantine/carousel": "^7.15.2",
     "@mantine/core": "^7.15.2",
     "@mantine/hooks": "^7.15.2",
->>>>>>> ada0244c4031243970e8ddb84edb63f1291a9692
     "@paypal/react-paypal-js": "^8.7.0",
     "@tabler/icons-react": "^3.26.0",
     "@testing-library/jest-dom": "^5.17.0",
