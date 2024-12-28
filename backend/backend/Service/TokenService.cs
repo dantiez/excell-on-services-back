@@ -24,9 +24,15 @@ namespace backend.Service {
                 return null; 
             }
 
+<<<<<<< HEAD
             var salt = PasswordHelper.GetSalt(); 
 
             var refreshTokenHashed = PasswordHelper.HashPassword(refreshToken,salt); 
+=======
+            var salt = PasswordHelper.GetSecureSalt(); 
+
+            var refreshTokenHashed = PasswordHelper.HashUsingPbkdf2(refreshToken,salt); 
+>>>>>>> 0850cc80dacacb02344c39f69b7cbdfca09c9aa2
             
             if (userRecord.RefreshTokens != null && userRecord.RefreshTokens.Any())
             {
@@ -82,7 +88,11 @@ namespace backend.Service {
                 return response;
             }
 
+<<<<<<< HEAD
             var refreshTokenToValidateHash = PasswordHelper.HashPassword(refreshTokenRequest.RefreshToken, Convert.FromBase64String(refreshToken.TokenSalt));
+=======
+            var refreshTokenToValidateHash = PasswordHelper.HashUsingPbkdf2(refreshTokenRequest.RefreshToken, Convert.FromBase64String(refreshToken.TokenSalt));
+>>>>>>> 0850cc80dacacb02344c39f69b7cbdfca09c9aa2
 
             if (refreshToken.TokenHash != refreshTokenToValidateHash)
             {

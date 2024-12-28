@@ -20,8 +20,13 @@
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Services> Services { get; set; }
         public DbSet<ServiceUsage> ServiceUsages { get; set; }
+<<<<<<< HEAD
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<User> User {get; set;}
+=======
+        public DbSet<Transaction> Transaction { get; set; }
+        public DbSet<User> Users {get; set;}
+>>>>>>> 0850cc80dacacb02344c39f69b7cbdfca09c9aa2
         public DbSet<RefreshToken> RefreshTokens {get;set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
