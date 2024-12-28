@@ -3,8 +3,11 @@
     using backend.Model;
     using Microsoft.EntityFrameworkCore;
 
-    public class AppDbcontext : DbContext
+    public partial class AppDbcontext : DbContext
     {
+        public AppDbcontext () {
+
+        }
         public AppDbcontext(DbContextOptions<AppDbcontext> options) : base(options) { }
 
 
@@ -17,8 +20,9 @@
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Services> Services { get; set; }
         public DbSet<ServiceUsage> ServiceUsages { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
-
+        public DbSet<Transaction> Transaction { get; set; }
+        public DbSet<User> Users {get; set;}
+        public DbSet<RefreshToken> RefreshTokens {get;set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            

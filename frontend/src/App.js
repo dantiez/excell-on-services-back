@@ -23,6 +23,8 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { MantineProvider } from "@mantine/core";
 import DefaultLayout from "./Component/Layouts/DefaultLayout";
+import Login from "./Component/Auth/Login";
+import Register from "./Component/Auth/Register";
 
 function App() {
   return (
@@ -30,8 +32,11 @@ function App() {
       <Router>
         <Routes>
           {/* Default Route */}
-          <Route path="/" element={<Navigate to="/Home" replace />} />
-
+          <Route>
+            <Route path="/" element={<Navigate to="/Home" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
           {/* Client */}
           <Route element={<DefaultLayout />}>
             <Route path="/Home" element={<Home />} />
