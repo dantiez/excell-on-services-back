@@ -68,6 +68,8 @@ function App() {
             path="/services/update/:id"
             element={<CreateAndUpdateServicePage />}
           />
+
+          <Route path="/Dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </MantineProvider>

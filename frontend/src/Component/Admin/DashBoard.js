@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import TransactionService from "../Service/transactionService"; // Updated import
 import Chart from "chart.js/auto";
+import { groupTransactionsByPeriod } from "../utils/orderUtils";
 
 const Dashboard = () => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-  const chartRef = useRef(null);
   const [periodType, setPeriodType] = useState("year");
   const [selectedMonth, setSelectedMonth] = useState("");
+  const chartRef = useRef(null); // Ref to hold the canvas
+  const chartInstanceRef = useRef(null); // Ref to hold the chart instance
 
   useEffect(() => {
     fetchTransactions(); // Fetch transactions when periodType or selectedMonth changes
@@ -14,61 +16,70 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (chartRef.current) {
-      chartRef.current.destroy();
+      // Clean up the previous chart instance before creating a new one
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+
+      const ctx = chartRef.current.getContext("2d");
+
+      // Create the new chart instance
+      chartInstanceRef.current = new Chart(ctx, {
+        type: "line",
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "top",
+            },
+            tooltip: {
+              callbacks: {
+                label: function (tooltipItem) {
+                  return `Revenue: $${tooltipItem.raw.toFixed(2)}`;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Period",
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Revenue",
+              },
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return `$${value}`;
+                },
+              },
+            },
+          },
+        },
+      });
     }
-    const ctx = document.getElementById("revenueChart").getContext("2d");
-    chartRef.current = new Chart(ctx, {
-      type: "line",
-      data: chartData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: "top",
-          },
-          tooltip: {
-            callbacks: {
-              label: function (tooltipItem) {
-                return `Revenue: $${tooltipItem.raw.toFixed(2)}`;
-              },
-            },
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Period",
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: "Revenue",
-            },
-            beginAtZero: true,
-            ticks: {
-              callback: function (value) {
-                return `$${value}`;
-              },
-            },
-          },
-        },
-      },
-    });
+
+    // Cleanup chart instance when the component unmounts or when chartData changes
     return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
       }
     };
-  }, [chartData]);
+  }, [chartData]); // Depend on chartData to recreate the chart when data changes
 
   const fetchTransactions = async () => {
     try {
       const today = new Date();
       let startDate, endDate;
 
+      // Set startDate and endDate based on periodType and selectedMonth
       if (periodType === "year") {
         startDate = new Date(today.getFullYear(), 0, 1)
           .toISOString()
@@ -85,39 +96,30 @@ const Dashboard = () => {
           .split("T")[0];
       }
 
-      const response =
-        periodType === "year" || (periodType === "month" && selectedMonth)
-          ? await TransactionService.getTransactionsByDateRange(
-              startDate,
-              endDate
-            )
-          : await TransactionService.getTransactionsByDateRange(); // Default call if needed
+      // Ensure that both startDate and endDate are set
+      if (!startDate || !endDate) {
+        console.error("Both start and end dates are required.");
+        return; // Prevent API call if dates are not valid
+      }
 
-      const successfulTransactions = response.filter(
-        (transaction) => transaction.status === "Successful Transaction"
+      const response = await TransactionService.getTransactionsByDateRange(
+        startDate,
+        endDate
+      );
+      const transactions = response.$values || [];
+
+      console.log("Transactions received: ", transactions); // Log received transactions
+
+      // Ensure transactions are passed correctly
+      const groupedData = groupTransactionsByPeriod(
+        transactions,
+        periodType,
+        selectedMonth
       );
 
-      const labels = successfulTransactions.map((transaction) =>
-        new Date(transaction.transactionDate).toLocaleDateString()
-      );
-      const data = successfulTransactions.map(
-        (transaction) => transaction.totalAmount
-      );
+      console.log("Grouped Data: ", groupedData); // Log grouped data
 
-      setChartData({
-        labels,
-        datasets: [
-          {
-            label: "Revenue",
-            data,
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-            fill: false,
-            tension: 0.1,
-          },
-        ],
-      });
+      setChartData(groupedData); // Only set data after fetching
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -158,7 +160,7 @@ const Dashboard = () => {
         </label>
       )}
       <div style={{ height: "300px" }}>
-        <canvas id="revenueChart"></canvas>
+        <canvas ref={chartRef} id="revenueChart"></canvas>
       </div>
     </div>
   );

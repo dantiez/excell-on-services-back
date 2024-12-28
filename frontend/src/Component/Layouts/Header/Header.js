@@ -30,7 +30,7 @@ const tabs = [
   },
   {
     label: "Profile",
-    link: "/Profile",
+    link: `/Profile/${8}`,
   },
   {
     label: "Services",
@@ -38,7 +38,7 @@ const tabs = [
   },
   {
     label: "Transaction",
-    link: "/Transaction",
+    link: `/Transaction/${8}`,
   },
   {
     label: "About Us",
