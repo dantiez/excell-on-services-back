@@ -199,7 +199,7 @@ const EmployeePage = () => {
           )}
         </tbody>
       </table>
-      <div className="pagination mt-3">
+      <div className="pagination mt-3 justify-content-center ">
         {[...Array(totalPages).keys()].map((page) => (
           <button
             key={page + 1}

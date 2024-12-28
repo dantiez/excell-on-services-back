@@ -23,18 +23,24 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { MantineProvider } from "@mantine/core";
 import DefaultLayout from "./Component/Layouts/DefaultLayout";
-
+import Login from "./Component/Auth/Login";
+import Register from "./Component/Auth/Register";
+import AboutUsPage from "./Component/Client/Aboutus";
 function App() {
   return (
     <MantineProvider>
       <Router>
         <Routes>
           {/* Default Route */}
-          <Route path="/" element={<Navigate to="/Home" replace />} />
-
+          <Route>
+            <Route path="/" element={<Navigate to="/Home" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
           {/* Client */}
           <Route element={<DefaultLayout />}>
             <Route path="/Home" element={<Home />} />
+            <Route path="/AboutUs" element={<AboutUsPage />} />
             <Route path="/Transaction/:Id" element={<Transaction />} />
             <Route path="/TransactionDetail" element={<TransactionDetails />} />
             <Route path="/Profile/:Id" element={<ProfilePage />} />

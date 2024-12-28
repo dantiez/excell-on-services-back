@@ -4,7 +4,7 @@ import TransactionService from "../Service/transactionService";
 import ServiceUsageService from "../Service/serviceUsageService";
 import EmployeeService from "../Service/EmployeeService";
 import ServicesService from "../Service/ServicesService";
-
+import AdminHeader from "../Layouts/HeaderAdmin/AdminHeader";
 const TransactionDetailPage = () => {
   const [transaction, setTransaction] = useState(null);
   const [serviceUsages, setServiceUsages] = useState([]);
@@ -109,108 +109,118 @@ const TransactionDetailPage = () => {
   const handleBack = () => navigate("/Transaction-admin");
 
   return (
-    <div className="container my-4">
-      <h3>Transaction Information</h3>
-      <p>
-        <strong>Client ID:</strong> {Id}
-      </p>
-      <p>
-        <strong>Transaction Date:</strong>{" "}
-        {new Date(transaction?.transactionDate).toLocaleDateString() || "N/A"}
-      </p>
-      <p>
-        <strong>Status:</strong> {status}
-      </p>
-      <p>
-        <strong>Amount:</strong> ${transaction?.amount?.toFixed(2) || "0.00"}
-      </p>
-      <p>
-        <strong>Payment Method:</strong> {transaction?.paymentMethod || "N/A"}
-      </p>
+    <>
+      <AdminHeader />
+      <div className="main-content">
+        <div className="container my-4">
+          <h3>Transaction Information</h3>
+          <p>
+            <strong>Client ID:</strong> {Id}
+          </p>
+          <p>
+            <strong>Transaction Date:</strong>{" "}
+            {new Date(transaction?.transactionDate).toLocaleDateString() ||
+              "N/A"}
+          </p>
+          <p>
+            <strong>Status:</strong> {status}
+          </p>
+          <p>
+            <strong>Amount:</strong> $
+            {transaction?.amount?.toFixed(2) || "0.00"}
+          </p>
+          <p>
+            <strong>Payment Method:</strong>{" "}
+            {transaction?.paymentMethod || "N/A"}
+          </p>
 
-      <h4>Services and Employees</h4>
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Service</th>
-            <th>Price</th>
-            <th>Employee Count</th>
-            <th>Employees</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(groupedServiceUsages).length > 0 ? (
-            Object.entries(groupedServiceUsages).map(([key, usages]) => {
-              const serviceDetails = servicesDetails[usages[0].idService];
-              if (!serviceDetails) {
-                fetchServiceDetails(usages[0].idService); // Fetch details if not loaded yet
-              }
-              const totalAmount = serviceDetails?.price * usages.length;
+          <h4>Services and Employees</h4>
+          <table className="table table-striped table-bordered">
+            <thead className="table-dark">
+              <tr>
+                <th>Service</th>
+                <th>Price</th>
+                <th>Employee Count</th>
+                <th>Employees</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(groupedServiceUsages).length > 0 ? (
+                Object.entries(groupedServiceUsages).map(([key, usages]) => {
+                  const serviceDetails = servicesDetails[usages[0].idService];
+                  if (!serviceDetails) {
+                    fetchServiceDetails(usages[0].idService); // Fetch details if not loaded yet
+                  }
+                  const totalAmount = serviceDetails?.price * usages.length;
 
-              return (
-                <React.Fragment key={key}>
-                  <tr>
-                    <td>{serviceDetails?.nameService || "N/A"}</td>
-                    <td>${serviceDetails?.price?.toFixed(2) || "0.00"}</td>
-                    <td>{usages.length}</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() =>
-                          toggleServiceDetails(usages[0].idService)
-                        }
-                      >
-                        {expandedServices[usages[0].idService] ? "▼" : "▲"}
-                      </button>
-                    </td>
-                  </tr>
-                  {expandedServices[usages[0].idService] && (
-                    <tr>
-                      <td colSpan="4">
-                        <strong>Service:</strong>{" "}
-                        {serviceDetails?.nameService || "N/A"}
-                        <br />
-                        <strong>Price:</strong> $
-                        {serviceDetails?.price?.toFixed(2) || "0.00"}
-                        <br />
-                        <strong>Employees Count:</strong> {usages.length}
-                        <br />
-                        {usages.map((usage) => {
-                          const employeeDetails = getEmployeeDetails(
-                            usage.idEmployee
-                          );
-                          return (
-                            <div key={usage.idEmployee}>
-                              <strong>Employee:</strong>{" "}
-                              {employeeDetails?.name || "N/A"} (
-                              {employeeDetails?.position || "N/A"})
-                              <br />
-                              <strong>Usage Date:</strong>{" "}
-                              {new Date(usage.usageDate).toLocaleDateString()}
-                              <hr />
-                            </div>
-                          );
-                        })}
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan="4" className="text-center">
-                No service usages available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                  return (
+                    <React.Fragment key={key}>
+                      <tr>
+                        <td>{serviceDetails?.nameService || "N/A"}</td>
+                        <td>${serviceDetails?.price?.toFixed(2) || "0.00"}</td>
+                        <td>{usages.length}</td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-secondary"
+                            onClick={() =>
+                              toggleServiceDetails(usages[0].idService)
+                            }
+                          >
+                            {expandedServices[usages[0].idService] ? "▼" : "▲"}
+                          </button>
+                        </td>
+                      </tr>
+                      {expandedServices[usages[0].idService] && (
+                        <tr>
+                          <td colSpan="4">
+                            <strong>Service:</strong>{" "}
+                            {serviceDetails?.nameService || "N/A"}
+                            <br />
+                            <strong>Price:</strong> $
+                            {serviceDetails?.price?.toFixed(2) || "0.00"}
+                            <br />
+                            <strong>Employees Count:</strong> {usages.length}
+                            <br />
+                            {usages.map((usage) => {
+                              const employeeDetails = getEmployeeDetails(
+                                usage.idEmployee
+                              );
+                              return (
+                                <div key={usage.idEmployee}>
+                                  <strong>Employee:</strong>{" "}
+                                  {employeeDetails?.name || "N/A"} (
+                                  {employeeDetails?.position || "N/A"})
+                                  <br />
+                                  <strong>Usage Date:</strong>{" "}
+                                  {new Date(
+                                    usage.usageDate
+                                  ).toLocaleDateString()}
+                                  <hr />
+                                </div>
+                              );
+                            })}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">
+                    No service usages available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
-      <button className="btn btn-primary" onClick={handleBack}>
-        Back to Transactions
-      </button>
-    </div>
+          <button className="btn btn-primary" onClick={handleBack}>
+            Back to Transactions
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

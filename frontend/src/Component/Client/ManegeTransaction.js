@@ -145,10 +145,10 @@ const ManegeTransaction = ({ Id }) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = groupedData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(groupedData.length / itemsPerPage);
-  console.log("id", Id);
+
   return (
     <div className="container my-4">
-      <h1 className="text-center mb-4">Manege Transaction</h1>
+      <h1 className="text-center mb-4">Manage Transaction</h1>
       {/* Filter Buttons */}
       <div className="d-flex justify-content-center mb-4">
         <button
@@ -182,6 +182,7 @@ const ManegeTransaction = ({ Id }) => {
               <th>User</th>
               <th>Total Amount</th>
               <th>Payment Date</th>
+              <th>Status</th>
               <th>Details</th>
             </tr>
           </thead>
@@ -193,6 +194,10 @@ const ManegeTransaction = ({ Id }) => {
                 <td>
                   {new Date(transaction.transactionDate).toLocaleDateString() ||
                     "N/A"}
+                </td>
+                <td>
+                  {/* Hardcoded status as 'paid' and applying green badge */}
+                  <span className="badge bg-success">Paid</span>
                 </td>
                 <td>
                   <button
@@ -221,6 +226,7 @@ const ManegeTransaction = ({ Id }) => {
             <tr>
               <th>User</th>
               <th>Total Amount</th>
+              <th>Status</th>
               <th>Details</th>
             </tr>
           </thead>
@@ -240,6 +246,15 @@ const ManegeTransaction = ({ Id }) => {
                     <td>{group[0].Id || "N/A"}</td>
                     <td>${totalAmount?.toFixed(2) || "0.00"}</td>
                     <td>
+                      <span
+                        className={`badge ${
+                          filter === "not_yet_paid" ? "bg-danger" : "bg-success"
+                        }`}
+                      >
+                        {filter === "not_yet_paid" ? "Not Yet Paid" : "Paid"}
+                      </span>
+                    </td>
+                    <td>
                       <button
                         className="btn btn-sm btn-secondary"
                         onClick={() => toggleExpandedItem(key)}
@@ -250,11 +265,11 @@ const ManegeTransaction = ({ Id }) => {
                   </tr>
                   {expandedItems[key] && (
                     <tr>
-                      <td colSpan="3">
+                      <td colSpan="4">
                         <strong>Service:</strong>{" "}
                         {serviceDetails?.nameService || "N/A"}
                         <br />
-                        <strong>Price:</strong> ${" "}
+                        <strong>Price:</strong> $
                         {serviceDetails?.price.toFixed(2) || "0"}
                         <br />
                         <strong>Employees:</strong>
@@ -306,6 +321,19 @@ const ManegeTransaction = ({ Id }) => {
           </ul>
         </nav>
       )}
+      <div className="pagination mt-3 justify-content-center ">
+        {[...Array(totalPages).keys()].map((page) => (
+          <button
+            key={page + 1}
+            className={`btn btn-sm ${
+              currentPage === page + 1 ? "btn-primary" : "btn-outline-primary"
+            } me-2`}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            {page + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import ServicesService from "../Service/ServicesService";
 import ServiceUsageService from "../Service/serviceUsageService"; // Import ServiceUsageService here
 import AlertMessage from "../AlertMessage";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import AdminHeader from "../Layouts/HeaderAdmin/AdminHeader";
 const ServicesPage = () => {
   const [services, setServices] = useState([]);
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -89,80 +89,85 @@ const ServicesPage = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container mt-5">
-      <h1>Services</h1>
-      <AlertMessage message={alert.message} type={alert.type} />
-      <Link to="/services/create" className="btn btn-primary mb-3">
-        Create Service
-      </Link>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Content</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentServices.map((service) => (
-            <tr key={service.idService}>
-              <td>{service.idService}</td>
-              <td>{service.nameService}</td>
-              <td>{service.content}</td>
-              <td>${service.price}</td>
-              <td>
-                <Link
-                  to={`/services/update/${service.idService}`}
-                  className="btn btn-warning btn-sm me-2"
-                  disabled={service.isReferenced} // Disable if service is in use
-                  style={{
-                    pointerEvents: service.isReferenced ? "none" : "auto", // Additional style to prevent clicks
-                    opacity: service.isReferenced ? 0.5 : 1, // Slightly fade the button when disabled
-                  }}
-                >
-                  Update
-                </Link>
-                <button
-                  className={`btn btn-danger btn-sm ${
-                    service.isReferenced ? "disabled" : ""
-                  }`}
-                  onClick={() => handleDelete(service.idService)}
-                  disabled={service.isReferenced}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <>
+      <AdminHeader />
+      <div className="main-content">
+        <div className="container mt-5">
+          <h1 className="text-center">Services</h1>
+          <AlertMessage message={alert.message} type={alert.type} />
+          <Link to="/services/create" className="btn btn-primary mb-3">
+            Create Service
+          </Link>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Content</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentServices.map((service) => (
+                <tr key={service.idService}>
+                  <td>{service.idService}</td>
+                  <td>{service.nameService}</td>
+                  <td>{service.content}</td>
+                  <td>${service.price}</td>
+                  <td>
+                    <Link
+                      to={`/services/update/${service.idService}`}
+                      className="btn btn-warning btn-sm me-2"
+                      disabled={service.isReferenced} // Disable if service is in use
+                      style={{
+                        pointerEvents: service.isReferenced ? "none" : "auto", // Additional style to prevent clicks
+                        opacity: service.isReferenced ? 0.5 : 1, // Slightly fade the button when disabled
+                      }}
+                    >
+                      Update
+                    </Link>
+                    <button
+                      className={`btn btn-danger btn-sm ${
+                        service.isReferenced ? "disabled" : ""
+                      }`}
+                      onClick={() => handleDelete(service.idService)}
+                      disabled={service.isReferenced}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {/* Pagination Controls */}
-      <nav>
-        <ul className="pagination">
-          {Array.from(
-            { length: Math.ceil(services.length / servicesPerPage) },
-            (_, index) => (
-              <li
-                key={index + 1}
-                className={`page-item ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  onClick={() => paginate(index + 1)}
-                  className="page-link"
-                >
-                  {index + 1}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    </div>
+          {/* Pagination Controls */}
+          <nav>
+            <ul className="pagination justify-content-center">
+              {Array.from(
+                { length: Math.ceil(services.length / servicesPerPage) },
+                (_, index) => (
+                  <li
+                    key={index + 1}
+                    className={`page-item ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      onClick={() => paginate(index + 1)}
+                      className="page-link "
+                    >
+                      {index + 1}
+                    </button>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </>
   );
 };
 

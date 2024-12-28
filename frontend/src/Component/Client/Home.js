@@ -19,7 +19,7 @@ const Home = () => {
           validServiceNames.map(async (name) => {
             const response = await ServicesService.getServicesByName(name);
             return response.$values[0]; // Extract the first service object from the API response
-          }),
+          })
         );
 
         setServices(fetchedServices);
@@ -65,7 +65,7 @@ const Home = () => {
               borderRadius: "10px",
               cursor: "pointer",
             }}
-            onClick={() => handleCardClick(1, service.idService)} // Pass Id and idService
+            onClick={() => handleCardClick(1, service.idService)}
           >
             <div>{getServiceIcon(service.nameService)}</div>
             <h4 className="mt-3">{service.nameService}</h4>

@@ -42,7 +42,7 @@ const tabs = [
   },
   {
     label: "About Us",
-    link: "#",
+    link: "/AboutUs",
   },
 ];
 export function Header() {

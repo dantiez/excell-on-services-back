@@ -1,0 +1,62 @@
+/* Sidebar container */
+.navbar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #343a40; /* Bootstrap bg-dark */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation list styling */
+.nav {
+  flex-grow: 1; /* Đẩy các mục lên cao, nhưng cho phép không gian mở rộng nếu cần */
+}
+
+/* Remove margin-top:auto */
+.nav-item.mt-auto {
+  margin-top: 0; /* Hủy bỏ việc đẩy mục Logout xuống dưới */
+}
+
+/* Title styling */
+.navbar-brand {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #fff; /* White text */
+  font-size: 1.25rem; /* Bootstrap fs-4 */
+  font-weight: bold;
+}
+
+/* Navigation link styling */
+.nav-link {
+  color: #ddd; /* Light gray */
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: #495057; /* Darker gray for hover effect */
+  color: #fff; /* White text on hover */
+}
+
+/* Active link styling */
+.nav-link.active {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: #fff; /* White text for active link */
+}
+
+/* Push the logout link to the bottom */
+.nav-item.mt-auto {
+  margin-top: auto; /* Đảm bảo mục cuối nằm dưới */
+}
+
+/* Add space for main content */
+.main-content {
+  margin-left: 250px; 
+  padding: 20px;
+  min-height: 100vh; 
+}
