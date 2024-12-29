@@ -44,6 +44,10 @@ const tabs = [
     label: "About Us",
     link: "/AboutUs",
   },
+  {
+    label: "Contact",
+    link: "/Contact",
+  },
 ];
 export function Header() {
   const navigate = useNavigate();

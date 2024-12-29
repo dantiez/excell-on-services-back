@@ -25,11 +25,8 @@ import { MantineProvider } from "@mantine/core";
 import DefaultLayout from "./Component/Layouts/DefaultLayout";
 import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
-<<<<<<< HEAD
 import AboutUsPage from "./Component/Client/Aboutus";
-=======
-
->>>>>>> 0850cc80dacacb02344c39f69b7cbdfca09c9aa2
+import ContactPage from "./Component/Client/ContactPage";
 function App() {
   return (
     <MantineProvider>
@@ -45,6 +42,7 @@ function App() {
           <Route element={<DefaultLayout />}>
             <Route path="/Home" element={<Home />} />
             <Route path="/AboutUs" element={<AboutUsPage />} />
+            <Route path="/Contact" element={<ContactPage />} />
             <Route path="/Transaction/:Id" element={<Transaction />} />
             <Route path="/TransactionDetail" element={<TransactionDetails />} />
             <Route path="/Profile/:Id" element={<ProfilePage />} />
