@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj": {}
+    "/home/khusdna/projects/excell-on-services-back/backend/backend/backend.csproj": {}
   },
   "projects": {
-    "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj": {
+    "/home/khusdna/projects/excell-on-services-back/backend/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj",
+        "projectUniqueName": "/home/khusdna/projects/excell-on-services-back/backend/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "D:\\demo\\excell-on-services-back\\backend\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\tran thanh dat\\.nuget\\packages\\",
-        "outputPath": "D:\\demo\\excell-on-services-back\\backend\\backend\\obj\\",
+        "projectPath": "/home/khusdna/projects/excell-on-services-back/backend/backend/backend.csproj",
+        "packagesPath": "/home/khusdna/.nuget/packages/",
+        "outputPath": "/home/khusdna/projects/excell-on-services-back/backend/backend/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\tran thanh dat\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/khusdna/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -89,29 +77,10 @@
             "net47",
             "net471",
             "net472",
-            "net48",
-            "net481"
+            "net48"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.28, 6.0.28]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[6.0.28, 6.0.28]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.28, 6.0.28]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.28, 6.0.28]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -120,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/6.0.136/RuntimeIdentifierGraph.json"
         }
       }
     }

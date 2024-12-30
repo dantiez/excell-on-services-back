@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ServicesService from "../Service/ServicesService";
 import { FaHeadset, FaPhoneAlt, FaBullhorn } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { CardsCarousel } from "../Layouts/Carousel/Carousel";
 
 const Home = () => {
   const [services, setServices] = useState([]);
@@ -51,7 +50,6 @@ const Home = () => {
 
   return (
     <div className="container my-4">
-      {/* <CardsCarousel /> */}
       <h2 className="text-center mb-4">Our Services</h2>
       <div className="d-flex justify-content-between">
         {services.map((service) => (

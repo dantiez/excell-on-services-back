@@ -16,7 +16,6 @@
             optionsBuilder.LogTo(Console.WriteLine); 
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Services> Services { get; set; }
         public DbSet<ServiceUsage> ServiceUsages { get; set; }

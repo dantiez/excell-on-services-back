@@ -24,6 +24,13 @@ namespace backend.DTO {
         public DateTime Ts { get; set; }
     }
 
+    public class LogoutReponse : BaseResponse {
+
+    }
+
+    public class SignUpResponse: BaseResponse {
+        public string Email {get; set;}
+    }
 
 
 }
