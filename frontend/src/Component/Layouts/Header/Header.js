@@ -67,11 +67,12 @@ export function Header() {
     }
 
     const handleLogout = async () => {
+        await AuthService.logout(token, user.nameid)
         navigate("/login");
     }
 
     useEffect(() => {
-        getUser(tokenData.nameid)
+        getUser(tokenData?.nameid)
     }, [tokenData])
 
     const items = tabs.map((tab) => (

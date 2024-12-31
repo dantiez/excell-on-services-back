@@ -16,12 +16,12 @@ export const AuthService = {
             return error.response
         }
     },
-    logout: async (accessToken) => {
+    logout: async (accessToken, userId) => {
         try {
             await axios.post(
                 `${API_BASE_URL}/logout`,
                 {
-
+                    userId
                 },
                 {
                     headers: {
