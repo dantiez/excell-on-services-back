@@ -30,14 +30,18 @@ import ContactPage from "../src/Component/Client/ContactPage";
 import { Toaster } from "sonner";
 import { Login } from "./Component/Auth/Login";
 import AdminHeader from "./Component/Layouts/HeaderAdmin/AdminHeader";
+import { getAccessToken, getAccessTokenData } from "./Component/AuthStore";
 function App() {
+    const tokenData = getAccessTokenData();
+
+    const basicRoute = !tokenData ? tokenData.isAdmin ? "/client/Home" : "/admin/Dashboard" : "/login";
     return (
         <MantineProvider>
             <Toaster richColors />
             <Router>
                 <Routes>
                     {/* Default Route */}
-                    <Route path="/" element={<Navigate to="/Home" replace />} />
+                    <Route path="/" element={<Navigate to={`${basicRoute}`} replace />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     {/* Client */}

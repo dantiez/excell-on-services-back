@@ -197,8 +197,8 @@ const TransactionPage = () => {
                                     <React.Fragment key={transaction.idTransaction}>
                                         <tr>
                                             <td>
-                                                {usersDetails[transaction.id] || "N/A"}{" "}
-                                                {usersDetails[transaction.id] || "N/A"}
+                                                {usersDetails[transaction.id]?.firstName || "N/A"}{" "}
+                                                {usersDetails[transaction.id]?.lastName || "N/A"}
                                             </td>
                                             <td>${transaction.amount?.toFixed(2) || "0.00"}</td>
                                             <td>
