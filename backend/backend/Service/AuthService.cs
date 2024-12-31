@@ -43,9 +43,7 @@ namespace backend.Service
 
         public async Task<TokenResponseDTO> LoginAsync(LoginRequest loginRequest)
         {
-            var user = ctx.Users.SingleOrDefault(user =>
-                user.Active && user.Email == loginRequest.Email
-            );
+            var user = ctx.Users.SingleOrDefault(user => user.Email == loginRequest.Email);
             if (user == null)
             {
                 return new TokenResponseDTO
@@ -76,6 +74,7 @@ namespace backend.Service
                 Success = true,
                 AccessToken = token.Item1,
                 RefreshToken = token.Item2,
+                isAdmin = user.Active,
             };
         }
 
@@ -133,7 +132,7 @@ namespace backend.Service
                 FirstName = signupRequest.FirstName,
                 LastName = signupRequest.LastName,
                 Ts = DateTime.Now,
-                Active = true, // You can save is false and send confirmation email to the user, then once the user confirms the email you can make it true
+                Active = signupRequest.isAdmin, // You can save is false and send confirmation email to the user, then once the user confirms the email you can make it true
             };
             await ctx.Users.AddAsync(user);
             var saveResponse = await ctx.SaveChangesAsync();

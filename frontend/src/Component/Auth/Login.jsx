@@ -19,11 +19,11 @@ export const Login = () => {
             toast.error(`Login Failed ${loginData.error}`);
             return;
         }
-
         setAccessToken(loginData.accessToken);
         setRefreshToken(loginData.refreshToken);
         toast.success("Login Success")
-        navigate("/Home");
+        loginData.isAdmin ? navigate("/admin/Dashboard") : navigate("/client/Home");
+
     };
 
     return (

@@ -4,6 +4,7 @@ import {
     Route,
     BrowserRouter as Router,
     Navigate,
+    Outlet,
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Transaction from "../src/Component/Client/Transaction";
@@ -28,6 +29,7 @@ import AboutUsPage from "../src/Component/Client/Aboutus";
 import ContactPage from "../src/Component/Client/ContactPage";
 import { Toaster } from "sonner";
 import { Login } from "./Component/Auth/Login";
+import AdminHeader from "./Component/Layouts/HeaderAdmin/AdminHeader";
 function App() {
     return (
         <MantineProvider>
@@ -39,45 +41,48 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     {/* Client */}
-                    <Route element={<DefaultLayout />}>
-                        <Route path="/Home" element={<Home />} />
-                        <Route path="/AboutUs" element={<AboutUsPage />} />
-                        <Route path="/Contact" element={<ContactPage />} />
-                        <Route path="/Transaction/:Id" element={<Transaction />} />
-                        <Route path="/TransactionDetail" element={<TransactionDetails />} />
-                        <Route path="/Profile/:Id" element={<ProfilePage />} />
+                    <Route path="/client" element={<DefaultLayout />}>
+                        <Route path="Home" element={<Home />} />
+                        <Route path="AboutUs" element={<AboutUsPage />} />
+                        <Route path="Contact" element={<ContactPage />} />
+                        <Route path="Transaction/:Id" element={<Transaction />} />
+                        <Route path="TransactionDetail" element={<TransactionDetails />} />
+                        <Route path="Profile/:Id" element={<ProfilePage />} />
                         <Route
-                            path="/Profile-Transaction-Detail"
+                            path="Profile-Transaction-Detail"
                             element={<ProfileTransactionDetail />}
                         />
                         <Route
-                            path="/ManegeTransaction/:Id"
+                            path="ManegeTransaction/:Id"
                             element={<ManegeTransaction />}
                         />
-                        <Route path="/employees/:Id" element={<EmployeePage />} />
+                        <Route path="employees/:Id" element={<EmployeePage />} />
                         <Route
-                            path="/create-update-employee/:Id/:employeeId?"
+                            path="create-update-employee/:Id/:employeeId?"
                             element={<CreateAndUpdateEmployeePage />}
                         />
                     </Route>
 
                     {/* Admin */}
-                    <Route path="/Transaction-admin" element={<TransactionPage />} />
-                    <Route
-                        path="/Transaction-detail-admin"
-                        element={<TransactionDetailPage />}
-                    />
-                    <Route path="/services" element={<ServicesPage />} />
-                    <Route
-                        path="/services/create"
-                        element={<CreateAndUpdateServicePage />}
-                    />
-                    <Route
-                        path="/services/update/:id"
-                        element={<CreateAndUpdateServicePage />}
-                    />
+                    <Route path="/admin" element={<><Outlet /></>}>
 
-                    <Route path="/Dashboard" element={<Dashboard />} />
+                        <Route path="Transaction-admin" element={<TransactionPage />} />
+                        <Route
+                            path="Transaction-detail-admin"
+                            element={<TransactionDetailPage />}
+                        />
+                        <Route path="services" element={<ServicesPage />} />
+                        <Route
+                            path="services/create"
+                            element={<CreateAndUpdateServicePage />}
+                        />
+                        <Route
+                            path="services/update/:id"
+                            element={<CreateAndUpdateServicePage />}
+                        />
+
+                        <Route path="Dashboard" element={<Dashboard />} />
+                    </Route>
                 </Routes>
             </Router>
         </MantineProvider>

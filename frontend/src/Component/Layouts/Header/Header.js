@@ -21,32 +21,35 @@ import { toast } from "sonner";
 import { AuthService } from "../../Service/AuthService";
 import { async } from "q";
 
-const tabs = [
-    {
-        label: "Home",
-        link: "/Home",
-    },
-    {
-        label: "Profile",
-        link: `/Profile/${8}`,
-    },
-    {
-        label: "Services",
-        link: "#",
-    },
-    {
-        label: "Transaction",
-        link: `/Transaction/${8}`,
-    },
-    {
-        label: "About Us",
-        link: "/AboutUs",
-    },
-    {
-        label: "Contact",
-        link: "/Contact",
-    },
-];
+const getTabs = (userId) => {
+    return [
+        {
+            label: "Home",
+            link: "Home",
+        },
+        {
+            label: "Profile",
+            link: `Profile/${userId}`,
+        },
+        {
+            label: "Services",
+            link: "#",
+        },
+        {
+            label: "Transaction",
+            link: `Transaction/${userId}`,
+        },
+        {
+            label: "About Us",
+            link: "AboutUs",
+        },
+        {
+            label: "Contact",
+            link: "Contact",
+        },
+    ];
+
+}
 export function Header() {
     const navigate = useNavigate();
     const theme = useMantineTheme();
@@ -74,7 +77,7 @@ export function Header() {
     useEffect(() => {
         getUser(tokenData?.nameid)
     }, [tokenData])
-
+    const tabs = getTabs(user?.id);
     const items = tabs.map((tab) => (
         <Tabs.Tab
             value={tab.link}

@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../Service/AuthService";
 import { Controller, useForm } from "react-hook-form";
-import { PasswordInput, TextInput } from "@mantine/core";
+import { Checkbox, PasswordInput, TextInput } from "@mantine/core";
 import { Fragment } from "react";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ const Register = () => {
 
 
     const onSubmit = async (data) => {
-        const { data: registerData } = await AuthService.signup({ ...data });
+        const { data: registerData } = await AuthService.signup({ ...data, isAdmin: data.isAdmin === "" ? false : true });
         if (!registerData) {
             toast.error("Sign Up Failed");
             navigate("/register")
@@ -128,6 +128,18 @@ const Register = () => {
                                             id="your-cf-password"
                                             error={fieldState.error?.message}
                                         />
+                                    </Fragment>
+                                );
+                            }}
+                        />
+                        <Controller
+                            name="isAdmin"
+                            defaultValue={""}
+                            control={control}
+                            render={({ field, fieldState }) => {
+                                return (
+                                    <Fragment>
+                                        <Checkbox {...field} label="Are you an Admin?" />
                                     </Fragment>
                                 );
                             }}

@@ -1,36 +1,42 @@
-
 using System.ComponentModel.DataAnnotations;
-namespace backend.DTO {
 
-    public class LoginRequest { 
-            public string Email {get;set;}
-            public string Password {get;set;}
-
+namespace backend.DTO
+{
+    public class LoginRequest
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 
-    public class SignUpRequest {
+    public class SignUpRequest
+    {
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
         [Required]
         public string Password { get; set; }
+
         [Required]
         public string ConfirmPassword { get; set; }
+
         [Required]
         public string FirstName { get; set; }
+
         [Required]
         public string LastName { get; set; }
+
+        [Required]
+        public bool isAdmin { get; set; }
+
         [Required]
         public DateTime Ts { get; set; }
     }
 
-    public class LogoutReponse : BaseResponse {
+    public class LogoutReponse : BaseResponse { }
 
+    public class SignUpResponse : BaseResponse
+    {
+        public string Email { get; set; }
     }
-
-    public class SignUpResponse: BaseResponse {
-        public string Email {get; set;}
-    }
-
-
 }
