@@ -59,7 +59,7 @@ const ProfilePage = () => {
                 </button>
                 <button
                     className="btn btn-outline-secondary"
-                    onClick={() => navigate(`/Transaction/${Id}`)}
+                    onClick={() => navigate(`/client/Transaction/${Id}`)}
                 >
                     Payment
                 </button>
