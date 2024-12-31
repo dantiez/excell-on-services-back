@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using backend.Service; 
-using backend.Helpers; 
 using backend.DTO;
 
 namespace backend.Controllers
@@ -14,10 +13,10 @@ namespace backend.Controllers
                private readonly AuthService authService;
         private readonly TokenService tokenService;
 
-        public AuthController(AuthService authService, TokenService tokenService)
+        public AuthController (AuthService _authService, TokenService _tokenService)
         {
-            this.authService = authService;
-            this.tokenService = tokenService;
+            authService = _authService;
+            tokenService = _tokenService;
         }
 
         [HttpPost]

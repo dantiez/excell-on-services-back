@@ -29,6 +29,7 @@ namespace backend.Helpers {
                     Audience = Audience, 
                     Expires = DateTime.Now.AddMinutes(15),
                     SigningCredentials = signingCredentials,
+                    NotBefore = DateTime.Now,
                     }; 
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor); 

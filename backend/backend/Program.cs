@@ -26,7 +26,9 @@ builder.Services.AddScoped<ServiceUsageService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<ServicesService>();
-
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<TokenService>();
 // Configure JSON options
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

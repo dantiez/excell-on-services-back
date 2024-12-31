@@ -6,27 +6,27 @@ import {
   Navigate,
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Transaction from "./Component/Client/Transaction";
-import TransactionDetails from "./Component/Client/TransactionDetails";
-import TransactionPage from "./Component/Admin/Transaction";
-import TransactionDetailPage from "./Component/Admin/TransactionDetail";
-import ManegeTransaction from "./Component/Client/ManegeTransaction";
-import ProfileTransactionDetail from "./Component/Client/ProfileTransactionDetail";
-import ServicesPage from "./Component/Admin/ServicesPage";
-import CreateAndUpdateServicePage from "./Component/Admin/CreateAndUpdateServicePage";
-import EmployeePage from "./Component/Client/EmployeePage";
-import CreateAndUpdateEmployeePage from "./Component/Client/CreateAndUpdateEmployeePage";
-import Home from "./Component/Client/Home";
-import ProfilePage from "./Component/Client/Proflie";
-import Dashboard from "./Component/Admin/DashBoard";
+import Transaction from "../../excell-o/src/Component/Client/Transaction";
+import TransactionDetails from "../../excell-o/src/Component/Client/TransactionDetails";
+import TransactionPage from "../../excell-o/src/Component/Admin/Transaction";
+import TransactionDetailPage from "../../excell-o/src/Component/Admin/TransactionDetail";
+import ManegeTransaction from "../../excell-o/src/Component/Client/ManegeTransaction";
+import ProfileTransactionDetail from "../../excell-o/src/Component/Client/ProfileTransactionDetail";
+import ServicesPage from "../../excell-o/src/Component/Admin/ServicesPage";
+import CreateAndUpdateServicePage from "../../excell-o/src/Component/Admin/CreateAndUpdateServicePage";
+import EmployeePage from "../../excell-o/src/Component/Client/EmployeePage";
+import CreateAndUpdateEmployeePage from "../../excell-o/src/Component/Client/CreateAndUpdateEmployeePage";
+import Home from "../../excell-o/src/Component/Client/Home";
+import ProfilePage from "../../excell-o/src/Component/Client/Proflie";
+import Dashboard from "../../excell-o/src/Component/Admin/DashBoard";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { MantineProvider } from "@mantine/core";
-import DefaultLayout from "./Component/Layouts/DefaultLayout";
-import Login from "./Component/Auth/Login";
-import Register from "./Component/Auth/Register";
-import AboutUsPage from "./Component/Client/Aboutus";
-import ContactPage from "./Component/Client/ContactPage";
+import DefaultLayout from "../../excell-o/src/Component/Layouts/DefaultLayout";
+import Login from "../../excell-o/src/Component/Auth/Login";
+import Register from "../../excell-o/src/Component/Auth/Register";
+import AboutUsPage from "../../excell-o/src/Component/Client/Aboutus";
+import ContactPage from "../../excell-o/src/Component/Client/ContactPage";
 function App() {
   return (
     <MantineProvider>
