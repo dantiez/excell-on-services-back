@@ -23,13 +23,15 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { MantineProvider } from "@mantine/core";
 import DefaultLayout from "../src/Component/Layouts/DefaultLayout";
-import Login from "../src/Component/Auth/Login";
 import Register from "../src/Component/Auth/Register";
 import AboutUsPage from "../src/Component/Client/Aboutus";
 import ContactPage from "../src/Component/Client/ContactPage";
+import { Toaster } from "sonner";
+import { Login } from "./Component/Auth/Login";
 function App() {
     return (
         <MantineProvider>
+            <Toaster richColors />
             <Router>
                 <Routes>
                     {/* Default Route */}
@@ -38,8 +40,6 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     {/* Client */}
                     <Route element={<DefaultLayout />}>
-
-                        <Route path="/login" element={<Login />} />
                         <Route path="/Home" element={<Home />} />
                         <Route path="/AboutUs" element={<AboutUsPage />} />
                         <Route path="/Contact" element={<ContactPage />} />

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 import config from "../config";
 
 const API_BASE_URL = `${config.baseUrl}/Auth`;
@@ -6,20 +7,22 @@ const API_BASE_URL = `${config.baseUrl}/Auth`;
 export const AuthService = {
     login: async (data) => {
         try {
-            const { userData } = await axios.post(`${API_BASE_URL}/login`, {
+            const userData = await axios.post(`${API_BASE_URL}/login`, {
                 email: data.email,
                 password: data.password,
             });
             return userData;
         } catch (error) {
-            throw new Error(error);
+            return error.response
         }
     },
     logout: async (accessToken) => {
         try {
             await axios.post(
                 `${API_BASE_URL}/logout`,
-                {},
+                {
+
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -42,9 +45,9 @@ export const AuthService = {
     },
     signup: async (signupData) => {
         try {
-            const { userEmail } = await axios.post(`${API_BASE_URL}/signup`, {
+            const userEmail = await axios.post(`${API_BASE_URL}/signup`, {
                 ...signupData,
-            });
+            })
             return userEmail;
         } catch (error) {
             throw new Error(error);

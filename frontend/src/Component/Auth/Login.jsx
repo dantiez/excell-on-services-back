@@ -2,28 +2,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../Service/AuthService";
-import { useActions } from "../AuthStore";
 import { Controller, useForm } from "react-hook-form";
 import { PasswordInput, TextInput } from "@mantine/core";
 import { Fragment } from "react";
-
-const Login = () => {
-    // const { actions } = useActions();
+import { toast, Toaster } from "sonner";
+import { getActions, useAccessToken, useActions } from "../AuthStore";
+export const Login = () => {
     const { handleSubmit, control } = useForm();
     const navigate = useNavigate();
-
+    const token = useAccessToken()
+    const { setAccessToken, setRefreshToken } = getActions()
     const onSubmit = async (data) => {
-        const { loginData } = await AuthService.login({ email: data.email, password: data.password });
+        const { data: loginData } = await AuthService.login({ email: data.email, password: data.password });
 
-        if (!loginData) {
-            console.error("Login Failed");
+        if (!!loginData.error) {
+            toast.error(`Login Failed ${loginData.error}`);
+            return;
         }
 
-        // actions.setAccessToken(loginData.accessToken);
-        // actions.setRefreshToken(loginData.refreshToken);
-
-        console.log(loginData);
-
+        setAccessToken(loginData.accessToken);
+        setRefreshToken(loginData.refreshToken);
+        toast.success("Login Success")
         navigate("/Home");
     };
 
@@ -89,4 +88,3 @@ const Login = () => {
     );
 };
 
-export default Login;
