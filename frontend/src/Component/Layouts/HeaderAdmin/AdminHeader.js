@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { getAccessToken, getAccessTokenData } from "../../AuthStore";
 import { AuthService } from "../../Service/AuthService";
 import "./AdminHeader.css"; // Import CSS file
@@ -24,31 +24,32 @@ const AdminHeader = () => {
             {/* List of links */}
             <ul className="nav flex-column w-100">
                 <li className="nav-item mb-2">
-                    <Link
+                    <NavLink
                         className={`nav-link ${location.pathname === "Dashboard" ? "active" : ""
                             }`}
-                        to="/Dashboard"
+                        to="/admin/Dashboard"
+
                     >
                         Dashboard
-                    </Link>
+                    </NavLink>
                 </li>
                 <li className="nav-item mb-2">
-                    <Link
+                    <NavLink
                         className={`nav-link ${location.pathname === "manager-user" ? "active" : ""
                             }`}
-                        to="/manager-user"
+                        to="/admin/manager-user"
                     >
                         Manager User
-                    </Link>
+                    </NavLink>
                 </li>
                 <li className="nav-item mb-2">
-                    <Link
+                    <NavLink
                         className={`nav-link ${location.pathname === "services" ? "active" : ""
                             }`}
-                        to="/services"
+                        to="/admin/services"
                     >
                         Service
-                    </Link>
+                    </NavLink>
                 </li>
             </ul>
 
