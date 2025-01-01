@@ -137,6 +137,18 @@ const Register = (isLogin) => {
                 );
               }}
             />
+            <Controller
+              name="isAdmin"
+              defaultValue={""}
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <Fragment>
+                    <Checkbox {...field} label="Are you an Admin?" />
+                  </Fragment>
+                );
+              }}
+            />
 
             <button type="submit" className="btn btn-primary">
               Register

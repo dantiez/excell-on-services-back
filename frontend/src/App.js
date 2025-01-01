@@ -65,27 +65,85 @@ function App() {
             <Route path="/register" element={<Register />} />
             {/* Client */}
             <Route path="/client" element={<DefaultLayout />}>
-              <Route path="Home" element={<Home />} />
-              <Route path="AboutUs" element={<AboutUsPage />} />
-              <Route path="Contact" element={<ContactPage />} />
-              <Route path="Transaction/:Id" element={<Transaction />} />
+              <Route
+                path="Home"
+                element={
+                  <PrivateRoute>
+                    <Home />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="AboutUs"
+                element={
+                  <PrivateRoute>
+                    <AboutUsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="Contact"
+                element={
+                  <PrivateRoute>
+                    <ContactPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="Transaction/:Id"
+                element={
+                  <PrivateRoute>
+                    <Transaction />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="TransactionDetail"
-                element={<TransactionDetails />}
+                element={
+                  <PrivateRoute>
+                    <TransactionDetails />
+                  </PrivateRoute>
+                }
               />
-              <Route path="Profile/:Id" element={<ProfilePage />} />
+              <Route
+                path="Profile/:Id"
+                element={
+                  <PrivateRoute>
+                    <ProfilePage />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="Profile-Transaction-Detail"
-                element={<ProfileTransactionDetail />}
+                element={
+                  <PrivateRoute>
+                    <ProfileTransactionDetail />
+                  </PrivateRoute>
+                }
               />
               <Route
                 path="ManegeTransaction/:Id"
-                element={<ManegeTransaction />}
+                element={
+                  <PrivateRoute>
+                    <ManegeTransaction />
+                  </PrivateRoute>
+                }
               />
-              <Route path="employees/:Id" element={<EmployeePage />} />
+              <Route
+                path="employees/:Id"
+                element={
+                  <PrivateRoute>
+                    <EmployeePage />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="create-update-employee/:Id/:employeeId?"
-                element={<CreateAndUpdateEmployeePage />}
+                element={
+                  <PrivateRoute>
+                    <CreateAndUpdateEmployeePage />
+                  </PrivateRoute>
+                }
               />
             </Route>
 
