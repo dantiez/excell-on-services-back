@@ -47,7 +47,7 @@ namespace backend.Controllers
         {
             if (!_userService.UpdateUser(id, userDto)) return NotFound();
 
-            return Ok();
+            return Ok(id);
         }
 
         // DELETE: api/User/{id}
@@ -56,7 +56,7 @@ namespace backend.Controllers
         {
             if (!_userService.DeleteUser(id)) return NotFound();
 
-            return Ok();
+            return Ok(id);
         }
     }
 }

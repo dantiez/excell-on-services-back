@@ -88,10 +88,13 @@ namespace backend.Service
         public  bool DeleteUser(int id)
         {
             var user = _context.Users.Find(id);
+
+            if (user == null ) return false;
             var token = _context.RefreshTokens.FirstOrDefault(e => e.UserId == user.Id); 
-            if (user == null || token == null) return false;
+        if (token != null) {
 
            _context.RefreshTokens.Remove(token);
+        }
         _context.Users.Remove(user);
             
             _context.SaveChanges();
