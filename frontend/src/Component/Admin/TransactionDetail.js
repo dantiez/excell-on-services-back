@@ -106,7 +106,7 @@ const TransactionDetailPage = () => {
     }));
   };
 
-  const handleBack = () => navigate("/Transaction-admin");
+  const handleBack = () => navigate("/admin/Transaction-admin");
 
   return (
     <>

@@ -111,7 +111,7 @@ const ProfileTransactionDetail = () => {
     }));
   };
 
-  const handleBack = () => navigate(`/Profile/${Id}`);
+  const handleBack = () => navigate(`/client/Profile/${Id}`);
 
   return (
     <div className="container my-4">

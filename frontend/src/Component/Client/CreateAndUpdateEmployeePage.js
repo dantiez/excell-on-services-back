@@ -219,7 +219,7 @@ const CreateAndUpdateEmployeePage = () => {
       }
 
       // Refresh employee list or update state after success
-      navigate(`/Profile/${Id}`);
+      navigate(`/client/Profile/${Id}`);
     } catch (error) {
       console.error("Error submitting form:", error);
       setAlert({ message: "Could not save employee.", type: "danger" });

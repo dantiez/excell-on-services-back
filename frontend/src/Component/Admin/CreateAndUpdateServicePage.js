@@ -114,7 +114,7 @@ const CreateAndUpdateServicePage = () => {
         await ServicesService.createService(service);
         setAlert({ message: "Service created successfully.", type: "success" });
       }
-      setTimeout(() => navigate("/services"), 1500); // Navigate after 1.5 seconds
+      setTimeout(() => navigate("/admin/services"), 1500); // Navigate after 1.5 seconds
     } catch (error) {
       setAlert({ message: error.message, type: "danger" });
     }

@@ -4,7 +4,8 @@ import TransactionService from "../Service/transactionService";
 import ServiceUsageService from "../Service/serviceUsageService";
 import EmployeeService from "../Service/EmployeeService";
 import ServicesService from "../Service/ServicesService";
-
+import UserService from "../Service/UserService";
+import { toast } from "sonner";
 const ManegeTransaction = ({ Id }) => {
   const [transactions, setTransactions] = useState([]);
   const [serviceUsages, setServiceUsages] = useState([]);
@@ -13,6 +14,7 @@ const ManegeTransaction = ({ Id }) => {
   const [filter, setFilter] = useState("paid");
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState({});
+  const [user, setUser] = useState();
   const navigate = useNavigate();
 
   // Fetch transactions for the given client ID
@@ -28,6 +30,18 @@ const ManegeTransaction = ({ Id }) => {
     }
   };
 
+  const getUser = async (userId) => {
+    const user = await UserService.getUserById(userId);
+    if (!user) {
+      toast.error("No User");
+      return;
+    }
+    setUser(user);
+    return;
+  };
+  useEffect(() => {
+    getUser(Id);
+  }, [Id]);
   // Fetch service usages for the given client ID and status
   const fetchServiceUsagesByClientAndStatus = async () => {
     try {
@@ -189,7 +203,7 @@ const ManegeTransaction = ({ Id }) => {
           <tbody>
             {transactions.map((transaction) => (
               <tr key={transaction.idTransaction}>
-                <td>{transaction.id?.name || "N/A"}</td>
+                <td>{`${user?.firstName} ${user?.lastName}` || "N/A"}</td>
                 <td>${transaction.amount?.toFixed(2) || "0.00"}</td>
                 <td>
                   {new Date(transaction.transactionDate).toLocaleDateString() ||
@@ -203,7 +217,7 @@ const ManegeTransaction = ({ Id }) => {
                   <button
                     className="btn btn-sm btn-secondary"
                     onClick={() =>
-                      navigate("/Profile-Transaction-Detail", {
+                      navigate("/client/Profile-Transaction-Detail", {
                         state: {
                           Id: transaction.id,
                           transactionDate: transaction.transactionDate,
@@ -243,7 +257,7 @@ const ManegeTransaction = ({ Id }) => {
               return (
                 <React.Fragment key={key}>
                   <tr>
-                    <td>{group[0].Id || "N/A"}</td>
+                    <td>{`${user?.firstName} ${user?.lastName}` || "N/A"}</td>
                     <td>${totalAmount?.toFixed(2) || "0.00"}</td>
                     <td>
                       <span

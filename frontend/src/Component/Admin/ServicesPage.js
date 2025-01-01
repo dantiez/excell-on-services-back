@@ -95,7 +95,7 @@ const ServicesPage = () => {
         <div className="container mt-5">
           <h1 className="text-center">Services</h1>
           <AlertMessage message={alert.message} type={alert.type} />
-          <Link to="/services/create" className="btn btn-primary mb-3">
+          <Link to="/admin/services/create" className="btn btn-primary mb-3">
             Create Service
           </Link>
           <table className="table table-striped">

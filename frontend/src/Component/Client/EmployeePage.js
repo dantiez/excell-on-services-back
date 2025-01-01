@@ -111,14 +111,14 @@ const EmployeePage = () => {
       });
       return;
     }
-    navigate(`/create-update-employee/${Id}/${employee.idEmployee}`, {
+    navigate(`/client/create-update-employee/${Id}/${employee.idEmployee}`, {
       state: { employee },
     });
   };
 
   const handleCreate = async () => {
     try {
-      navigate(`/create-update-employee/${Id}`);
+      navigate(`/client/create-update-employee/${Id}`);
       fetchEmployees();
     } catch (error) {
       setAlert({
