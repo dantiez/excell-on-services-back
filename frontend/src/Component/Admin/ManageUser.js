@@ -71,6 +71,7 @@ export const ManageUser = () => {
           <EditUserForm id={id} />
         </>
       ),
+      onClose: () => getAllUser(),
     });
   };
 
