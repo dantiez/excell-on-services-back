@@ -70,17 +70,13 @@ namespace backend.Service
         }
 
         // Update an existing user
-        public bool UpdateUser(int id, UserDTO userDto)
+        public bool UpdateUser(int id, UpdateUser userDto)
         {
             var user = _context.Users.Find(id);
             if (user == null) return false;
-
             user.Email = userDto.Email;
-            user.Password = userDto.Password;
-            user.PasswordSalt = userDto.PasswordSalt;
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
-            user.Active = userDto.Active;
             user.Ts = DateTime.Now;
 
             _context.Users.Update(user);
@@ -89,12 +85,15 @@ namespace backend.Service
         }
 
         // Delete a user
-        public bool DeleteUser(int id)
+        public  bool DeleteUser(int id)
         {
             var user = _context.Users.Find(id);
-            if (user == null) return false;
+            var token = _context.RefreshTokens.FirstOrDefault(e => e.UserId == user.Id); 
+            if (user == null || token == null) return false;
 
-            _context.Users.Remove(user);
+           _context.RefreshTokens.Remove(token);
+        _context.Users.Remove(user);
+            
             _context.SaveChanges();
             return true;
         }

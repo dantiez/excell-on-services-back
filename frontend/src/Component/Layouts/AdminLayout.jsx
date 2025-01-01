@@ -1,6 +1,5 @@
 import {
   AppShell,
-  AppShellFooter,
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
@@ -9,7 +8,7 @@ import { Outlet } from "react-router-dom";
 import { Header } from "./Header/Header";
 import { NavbarSimpleColored } from "./Nav";
 
-const DefaultLayout = () => {
+export const AdminLayout = () => {
   return (
     <>
       <AppShell
@@ -30,5 +29,3 @@ const DefaultLayout = () => {
     </>
   );
 };
-
-export default DefaultLayout;

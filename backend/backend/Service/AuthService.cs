@@ -74,6 +74,7 @@ namespace backend.Service
                 Success = true,
                 AccessToken = token.Item1,
                 RefreshToken = token.Item2,
+                UserId = user.Id,
                 isAdmin = user.Active,
             };
         }

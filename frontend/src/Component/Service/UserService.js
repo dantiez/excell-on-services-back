@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 import config from "../config";
 
 const API_BASE_URL = `${config.baseUrl}/User`;
@@ -10,6 +11,7 @@ const UserService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching users:", error);
+      toast.error(error);
       throw error;
     }
   },

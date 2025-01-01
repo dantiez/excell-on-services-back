@@ -1,4 +1,6 @@
-﻿namespace backend.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace backend.DTO
 {
     public partial class UserDTO
     {
@@ -18,7 +20,13 @@
         public bool Active { get; set; }
 
     }
+    public class UpdateUser { 
 
+        [EmailAddress]
+        public string Email {get; set;}
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
     public class UserResponse : BaseResponse
     {
         public string Email { get; set; }

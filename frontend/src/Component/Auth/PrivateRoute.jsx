@@ -1,11 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { getAccessTokenData } from "../AuthStore";
+import { getAccessTokenData, getUserData } from "../AuthStore";
 
 export const PrivateRoute = ({ isAdmin = false, children }) => {
-  const tokenData = getAccessTokenData();
+  const tokenData = getUserData();
   if (!tokenData) return <Navigate to={"/login"} replace />;
-
-  if (isAdmin && !tokenData?.isAdmin) return <>You dont have permission</>;
+  console.log(tokenData);
+  if (isAdmin && !tokenData?.active) return <>You dont have permission</>;
 
   return <>{children}</>;
 };

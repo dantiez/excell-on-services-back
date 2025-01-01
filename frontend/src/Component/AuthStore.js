@@ -10,6 +10,10 @@ const authStore = create()(
       accessToken: undefined,
       refressToken: undefined,
       accessTokenData: undefined,
+      userData: undefined,
+      setUserData: (userData) => {
+        set({ userData });
+      },
       setAccessToken: (accessToken) => {
         const accessTokenData = (() => {
           try {
@@ -44,7 +48,9 @@ const actionsSelector = (state) => ({
   setAccessToken: state.setAccessToken,
   setRefreshToken: state.setRefreshToken,
   clearTokens: state.clearTokens,
+  setUserData: state.setUserData,
 });
+const userDataSelector = (state) => state.userData;
 
 //Getter
 export const getAccessToken = () => accessTokenSelector(authStore.getState());
@@ -52,11 +58,13 @@ export const getAccessTokenData = () =>
   accessTokenDataSelector(authStore.getState());
 export const getRefreshToken = () => refreshTokenSelector(authStore.getState());
 export const getActions = () => actionsSelector(authStore.getState());
+export const getUserData = () => userDataSelector(authStore.getState());
 
 export const useAccessToken = () => useAuthStore(accessTokenSelector);
 export const useAccessTokenData = () => useAuthStore(accessTokenDataSelector);
 export const useRefreshToken = () => useAuthStore(refreshTokenSelector);
 export const useActions = () => useAuthStore(actionsSelector);
+export const useUserData = () => useAuthStore(userDataSelector);
 
 export function useAuthStore(selector) {
   return useStore(authStore, selector);

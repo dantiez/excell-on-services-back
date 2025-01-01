@@ -22,6 +22,8 @@ import ProfilePage from "../src/Component/Client/Proflie";
 import Dashboard from "../src/Component/Admin/DashBoard";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
+import "@mantine/core/styles.layer.css";
+import "mantine-datatable/styles.layer.css";
 import { MantineProvider } from "@mantine/core";
 import DefaultLayout from "../src/Component/Layouts/DefaultLayout";
 import Register from "../src/Component/Auth/Register";
@@ -30,83 +32,133 @@ import ContactPage from "../src/Component/Client/ContactPage";
 import { Toaster } from "sonner";
 import { Login } from "./Component/Auth/Login";
 import AdminHeader from "./Component/Layouts/HeaderAdmin/AdminHeader";
-import { getAccessToken, getAccessTokenData } from "./Component/AuthStore";
+import {
+  getAccessToken,
+  getAccessTokenData,
+  getUserData,
+} from "./Component/AuthStore";
 import { PrivateRoute } from "./Component/Auth/PrivateRoute";
+import { ManageUser } from "./Component/Admin/ManageUser";
+import { AdminLayout } from "./Component/Layouts/AdminLayout";
+import { ModalsProvider } from "@mantine/modals";
 function App() {
   const tokenData = getAccessTokenData();
-
-  const basicRoute = tokenData
-    ? tokenData.isAdmin
-      ? "/client/Home"
-      : "/admin/Dashboard"
-    : "/login";
+  const userData = getUserData();
+  const basicRoute =
+    tokenData && userData
+      ? !userData.active
+        ? "/client/Home"
+        : "/admin/Dashboard"
+      : "/login";
   return (
     <MantineProvider>
       <Toaster richColors />
-      <Router>
-        <Routes>
-          {/* Default Route */}
-          <Route path="/" element={<Navigate to={`${basicRoute}`} replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          {/* Client */}
-          <Route path="/client" element={<DefaultLayout />}>
-            <Route path="Home" element={<Home />} />
-            <Route path="AboutUs" element={<AboutUsPage />} />
-            <Route path="Contact" element={<ContactPage />} />
-            <Route path="Transaction/:Id" element={<Transaction />} />
-            <Route path="TransactionDetail" element={<TransactionDetails />} />
-            <Route path="Profile/:Id" element={<ProfilePage />} />
+      <ModalsProvider>
+        <Router>
+          <Routes>
+            {/* Default Route */}
             <Route
-              path="Profile-Transaction-Detail"
-              element={<ProfileTransactionDetail />}
+              path="/"
+              element={<Navigate to={`${basicRoute}`} replace />}
             />
-            <Route
-              path="ManegeTransaction/:Id"
-              element={<ManegeTransaction />}
-            />
-            <Route path="employees/:Id" element={<EmployeePage />} />
-            <Route
-              path="create-update-employee/:Id/:employeeId?"
-              element={<CreateAndUpdateEmployeePage />}
-            />
-          </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            {/* Client */}
+            <Route path="/client" element={<DefaultLayout />}>
+              <Route path="Home" element={<Home />} />
+              <Route path="AboutUs" element={<AboutUsPage />} />
+              <Route path="Contact" element={<ContactPage />} />
+              <Route path="Transaction/:Id" element={<Transaction />} />
+              <Route
+                path="TransactionDetail"
+                element={<TransactionDetails />}
+              />
+              <Route path="Profile/:Id" element={<ProfilePage />} />
+              <Route
+                path="Profile-Transaction-Detail"
+                element={<ProfileTransactionDetail />}
+              />
+              <Route
+                path="ManegeTransaction/:Id"
+                element={<ManegeTransaction />}
+              />
+              <Route path="employees/:Id" element={<EmployeePage />} />
+              <Route
+                path="create-update-employee/:Id/:employeeId?"
+                element={<CreateAndUpdateEmployeePage />}
+              />
+            </Route>
 
-          {/* Admin */}
-          <Route
-            path="/admin"
-            element={
-              <>
-                <Outlet />
-              </>
-            }
-          >
+            {/* Admin */}
             <Route
-              path="Transaction-admin"
+              path="/admin"
               element={
-                <PrivateRoute isAdmin={true}>
-                  <TransactionPage />
-                </PrivateRoute>
+                <>
+                  <AdminLayout />
+                </>
               }
-            />
-            <Route
-              path="Transaction-detail-admin"
-              element={<TransactionDetailPage />}
-            />
-            <Route path="services" element={<ServicesPage />} />
-            <Route
-              path="services/create"
-              element={<CreateAndUpdateServicePage />}
-            />
-            <Route
-              path="services/update/:id"
-              element={<CreateAndUpdateServicePage />}
-            />
+            >
+              <Route
+                path="Transaction-admin"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <TransactionPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="Transaction-detail-admin"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <TransactionDetailPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="services"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <ServicesPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="services/create"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <CreateAndUpdateServicePage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="services/update/:id"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <CreateAndUpdateServicePage />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route path="Dashboard" element={<Dashboard />} />
-          </Route>
-        </Routes>
-      </Router>
+              <Route
+                path="Dashboard"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="manage-user"
+                element={
+                  <PrivateRoute isAdmin={true}>
+                    <ManageUser />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+          </Routes>
+        </Router>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

@@ -43,11 +43,11 @@ namespace backend.Controllers
 
         // PUT: api/User/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] UserDTO userDto)
+        public IActionResult UpdateUser(int id, [FromBody] UpdateUser userDto)
         {
             if (!_userService.UpdateUser(id, userDto)) return NotFound();
 
-            return NoContent();
+            return Ok();
         }
 
         // DELETE: api/User/{id}
@@ -56,7 +56,7 @@ namespace backend.Controllers
         {
             if (!_userService.DeleteUser(id)) return NotFound();
 
-            return NoContent();
+            return Ok();
         }
     }
 }

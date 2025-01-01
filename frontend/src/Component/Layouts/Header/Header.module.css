@@ -17,7 +17,8 @@
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: var(--mantine-radius-sm);
   transition: background-color 100ms ease;
-
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 5px;
   &:hover {
     background-color: light-dark(
       var(--mantine-color-white),
