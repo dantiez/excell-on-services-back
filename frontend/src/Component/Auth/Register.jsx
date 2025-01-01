@@ -19,12 +19,15 @@ const Register = (isLogin) => {
       ...data,
       isAdmin: data.isAdmin === "" ? false : true,
     });
-
+    console.log(registerData);
     if (registerData.errors) {
       Object.values(registerData.errors).forEach((error) => {
         toast.error(`${error[0]}`);
       });
       navigate("/register");
+      return;
+    } else if (registerData.error) {
+      toast.error(registerData.error);
       return;
     } else {
       toast.success("Sign Up Success");

@@ -19,6 +19,9 @@ export const CreateUserForm = () => {
         toast.error(`${error[0]}`);
       });
       return;
+    } else if (registerData.error) {
+      toast.error(registerData.error);
+      return;
     } else {
       modals.closeAll();
       toast.success("Sign Up Success");

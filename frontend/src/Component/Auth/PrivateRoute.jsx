@@ -19,7 +19,7 @@ export const PrivateRoute = ({ isAdmin = false, children }) => {
       labels: { confirm: "Go back" },
     });
     return (
-      <Flex justify={"center"} align={"center"}>
+      <Flex direction={"column"} justify={"center"} align={"center"} gap={32}>
         <Paper shadow={"md"}>
           <Text>Permision Denied</Text>
           <Button onClick={() => navigate("/", { replace: true })}>
