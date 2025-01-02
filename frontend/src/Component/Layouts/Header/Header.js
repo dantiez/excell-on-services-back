@@ -37,7 +37,7 @@ export function Header() {
   const handleLogout = async () => {
     await AuthService.logout(token, tokenData.nameid);
     clearTokens();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   const handleEditUser = () => {
@@ -48,7 +48,6 @@ export function Header() {
           <UpdateCurrentUser id={userData.id} />
         </>
       ),
-      onClose: () => navigate("/", { replace: true }),
     });
   };
 
