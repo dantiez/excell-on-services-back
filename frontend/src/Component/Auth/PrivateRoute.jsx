@@ -10,14 +10,6 @@ export const PrivateRoute = ({ isAdmin = false, children }) => {
   if (!tokenData) return <Navigate to={"/login"} replace />;
 
   if (isAdmin != tokenData.active) {
-    modals.openConfirmModal({
-      title: "Permisions Denied",
-      children: <>You do not have Permision for this page</>,
-      onConfirm: () => {
-        navigate("/", { replace: true });
-      },
-      labels: { confirm: "Go back" },
-    });
     return (
       <Flex direction={"column"} justify={"center"} align={"center"} gap={32}>
         <Paper shadow={"md"}>

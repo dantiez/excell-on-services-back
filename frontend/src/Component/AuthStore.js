@@ -33,6 +33,7 @@ const authStore = create()(
           accessToken: undefined,
           accessTokenData: undefined,
           refreshToken: undefined,
+          userData: undefined,
         });
       },
     }),

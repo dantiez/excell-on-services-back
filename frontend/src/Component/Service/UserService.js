@@ -57,7 +57,17 @@ const UserService = {
       throw error;
     }
   },
-
+  updateCurrentUser: async (userId, userData) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/currentUser/${userId}`,
+        userData,
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
   deleteUser: async (userId) => {
     try {
       if (userId <= 0) {

@@ -50,6 +50,14 @@ namespace backend.Controllers
             return Ok(id);
         }
 
+        [HttpPut("currentUser/{id}")]
+        public SignUpResponse  UpdateCurrentUser(int id, [FromBody] UpdateCurrentUser userDto)
+        {
+            
+            return _userService.UpdateCurrentUser(id, userDto);
+        }
+
+
         // DELETE: api/User/{id}
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(int id)

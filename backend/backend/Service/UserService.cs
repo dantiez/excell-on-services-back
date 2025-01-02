@@ -1,6 +1,7 @@
 ﻿using backend.DbContext;
 using backend.DTO;
 using backend.Model;
+using backend.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,8 @@ namespace backend.Service
         public bool UpdateUser(int id, UpdateUser userDto)
         {
             var user = _context.Users.Find(id);
-            if (user == null) return false;
+            
+                if (user == null) return false;
             user.Email = userDto.Email;
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
@@ -83,6 +85,41 @@ namespace backend.Service
             _context.SaveChanges();
             return true;
         }
+        public SignUpResponse UpdateCurrentUser(int id, UpdateCurrentUser userDto){
+            var user = _context.Users.Find(id);
+            if(user ==null) {
+                return new SignUpResponse {
+                Success = false,
+                Error = "No User", 
+                ErrorCode = "503"
+                };
+            }
+                if (userDto.Password != userDto.ConfirmPassword)
+                {
+                    return new SignUpResponse
+                    {
+                        Success = false,
+                        Error = "Password and confirm password do not match",
+                        ErrorCode = "S03",
+                    };
+                }
+                var salt = PasswordHelper.GetSecureSalt();
+                var passwordHash = PasswordHelper.HashUsingPbkdf2(userDto.Password, salt);
+            user.Email = userDto.Email;
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.Password = passwordHash; 
+            user.PasswordSalt = Convert.ToBase64String(salt);
+            user.Ts = DateTime.Now;
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+            return new SignUpResponse {
+                Success = true, 
+                        Email = user.Email
+            };
+        }
+
 
         // Delete a user
         public  bool DeleteUser(int id)
