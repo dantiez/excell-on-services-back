@@ -47,6 +47,9 @@ namespace backend.DTO
 
 
     }
+public class DeleteResponse : BaseResponse {
+
+}
     public class UserResponse : BaseResponse
     {
         public string Email { get; set; }

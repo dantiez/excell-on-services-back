@@ -34,8 +34,9 @@ export const ManageUser = () => {
 
   const deleteUser = async (id) => {
     const rs = await UserService.deleteUser(id);
-    if (!rs) {
-      toast.error("Delete Failed");
+    if (rs.data.error) {
+      toast.error(rs.data.error);
+      return;
     }
     toast.success("Delete Success");
     await getAllUser();

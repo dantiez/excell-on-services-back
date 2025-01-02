@@ -74,11 +74,9 @@ const UserService = {
         throw new Error("Invalid user ID.");
       }
 
-      await axios.delete(`${API_BASE_URL}/${userId}`);
-      return true;
+      return axios.delete(`${API_BASE_URL}/${userId}`);
     } catch (error) {
-      console.error(`Error deleting user with ID ${userId}:`, error);
-      throw error;
+      toast.error(error.response);
     }
   },
 };

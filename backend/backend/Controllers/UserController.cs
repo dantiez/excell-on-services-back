@@ -10,10 +10,11 @@ namespace backend.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
-
-        public UserController(UserService userService)
+private readonly EmployeeService _employeeService;
+        public UserController(UserService userService, EmployeeService employeeService)
         {
             _userService = userService;
+            _employeeService = employeeService;
         }
 
         // GET: api/User
@@ -60,11 +61,23 @@ namespace backend.Controllers
 
         // DELETE: api/User/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
+        public DeleteResponse DeleteUser(int id)
         {
-            if (!_userService.DeleteUser(id)) return NotFound();
+            var employees = _employeeService.GetEmployeesByClientIdAsync(id); 
+               if(employees != null) return new DeleteResponse {
+                   Success = false,
+                           Error = "Cannot delete User that have employees"
+               };
+            if (!_userService.DeleteUser(id)) return new DeleteResponse {
+                Success = false, 
+                        Error = "Cannot delete User"
+            };
 
-            return Ok(id);
+
+
+            return new DeleteResponse {
+                Success = true
+            };
         }
     }
 }
